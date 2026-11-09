@@ -1,0 +1,28 @@
+frontend/src/lib/geo.test.ts
+  s_874b9dace0bb92::t_51af1c344111b5 1-55
+frontend/src/features/map/heatmap/bake.test.ts
+  s_874b9dace0bb92::t_9e1f9de3155ee9 1-40
+frontend/src/features/results/TripStrip.test.tsx
+  s_874b9dace0bb92::t_269c427d78f2ef 1-46
+frontend/package.json
+  s_874b9dace0bb92::t_02c4ac20d54046 2,9-12
+frontend/src/lib/time.test.ts
+  s_874b9dace0bb92::t_06b10e8a23197c 1
+  s_874b9dace0bb92::t_e964eead706126 2-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a4f289d4fabdd3547a77d2f82a3436fb5b3685c6",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
