@@ -3,19 +3,26 @@
 services:
   web:
     image: ghcr.io/siruyy/spotter-truck-routing-web:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     environment:
-      API_UPSTREAM: api:8000
+      # Unique alias: Dokploy joins `web` to a shared network where other
+      # projects may also run a service called "api".
+      API_UPSTREAM: truckroute-api:8000
     depends_on:
       api:
         condition: service_healthy
 
   api:
     image: ghcr.io/siruyy/spotter-truck-routing-api:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
+    networks:
+      default:
+        aliases: [truckroute-api]
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY}
-      ALLOWED_HOSTS: ${PUBLIC_HOST:-truckroute.siruyy.dev},api,localhost
+      ALLOWED_HOSTS: ${PUBLIC_HOST:-truckroute.siruyy.dev},api,localhost,127.0.0.1
       CSRF_TRUSTED_ORIGINS: https://${PUBLIC_HOST:-truckroute.siruyy.dev}
       DATABASE_URL: postgres://truckroute:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/truckroute
       REDIS_URL: redis://redis:6379/0
