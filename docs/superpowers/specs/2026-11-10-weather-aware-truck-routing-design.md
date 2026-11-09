@@ -1,6 +1,6 @@
 # Weather-Aware Truck Routing: Design
 
-Date: 2026-11-10 · Status: draft for approval
+Date: 2026-11-10 · Status: approved and implemented (see §12 for changes made during the build)
 
 ## 1. Intent
 
@@ -357,3 +357,17 @@ All routes are under `/api`. Inputs are validated with pydantic, and errors use 
 - **GitHub:** create the public repo `github.com/Siruyy/spotter-truck-routing` and push to it.
 - **DNS:** add `A truckroute → 178.128.97.151` (proxied) in Cloudflare via the Cloudflare connector.
 - **Dokploy:** create the "Spotter Truck Routing" project and Compose stack, set its env vars (including `TOMTOM_API_KEY`) and deploy.
+
+## 12. Implementation notes (changes made while building)
+
+| Spec | Built | Why |
+|---|---|---|
+| `maxAlternatives=5` | `maxAlternatives=2`; forced via-point alternatives are requested **concurrently** with the primary route, using the great-circle midpoint | Five alternatives doubled TomTom latency (6.6 s vs 3.4 s on a 600 mi trip) for routes that were discarded |
+| Via point offset from the primary route's midpoint | Offset from the great-circle midpoint | Lets every TomTom call start at once |
+| Heatmap: IDW (k = 6) | Gaussian kernel over the lattice, padded raster bounds, premultiplied bitmaps | Smoother field and a soft corridor edge, with no stair-steps or hard bbox cut |
+| Better departure: earliest strictly better offset | Safest offset (earliest on ties), as long as it beats the current plan | Avoids suggesting +2 h when +4 h clears all severe miles |
+| Route names from the two longest roads | Names from the roads that set each route *apart* from the others (`routing/naming.py`) | Alternatives sharing an interstate otherwise had identical names |
+| NWS alerts per 0.1° cell | Per 0.25° cell, concurrency 8, 3 min cache | Fewer calls, same practical coverage |
+| shadcn/ui | Hand-built components on Tailwind tokens | Keeps the visual language custom (highway-sign type, road shields), with fewer dependencies |
+| gunicorn + uvicorn workers | uvicorn `--workers` directly | `uvicorn.workers` is deprecated; uvicorn manages its own workers |
+| Shared links needed a live plan for the heatmap | Falls back to a viewport heatmap of the trip area once the plan expires from Redis | Shared links keep working after 6 h |
