@@ -50,6 +50,35 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         navigateFallbackDenylist: [/^\/api\//, /^\/radar\//],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        runtimeCaching: [
+          {
+            // Basemap style, sprites and glyphs: needed for any map (and route layers) to render offline.
+            urlPattern: ({ url }) =>
+              url.hostname === 'tiles.openfreemap.org' && /\/(styles|sprites|fonts)\//.test(url.pathname),
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'basemap-style', expiration: { maxEntries: 400, maxAgeSeconds: 30 * 86400 } },
+          },
+          {
+            // Vector tiles the driver has already looked at. Kept well under OpenFreeMap's offline caps.
+            urlPattern: ({ url }) => url.hostname === 'tiles.openfreemap.org',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'basemap-tiles',
+              expiration: { maxEntries: 1500, maxAgeSeconds: 7 * 86400 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // Last trip's heatmap and alerts, so the slider still works offline.
+            urlPattern: ({ url }) => /^\/api\/plans\/[^/]+\/(heatmap|alerts)$/.test(url.pathname),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'trip-data',
+              networkTimeoutSeconds: 10,
+              expiration: { maxEntries: 20, maxAgeSeconds: 2 * 86400 },
+            },
+          },
+        ],
       },
     }),
   ],
