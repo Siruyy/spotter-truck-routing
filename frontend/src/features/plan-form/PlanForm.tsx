@@ -1,5 +1,5 @@
 import { ArrowDownUp, Loader2, Route } from 'lucide-react'
-import { type FormEvent, useMemo, useState } from 'react'
+import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { ApiError } from '@/api/client'
 import { useCreatePlan } from '@/api/hooks'
 import type { IntervalMi, Place, Plan } from '@/api/types'
@@ -11,6 +11,26 @@ import { type DepartureChoice, resolveDeparture } from './departure'
 import { DepartureField } from './DepartureField'
 import { LoadField } from './LoadField'
 import { PlaceInput } from './PlaceInput'
+
+const STAGES = [
+  'Finding truck routes…',
+  'Checking the forecast at each checkpoint…',
+  'Scoring routes…',
+] as const
+
+/** Honest-ish progress copy: the request is one call, so stages advance on a timer. */
+function usePendingStage(pending: boolean): string {
+  const [i, setI] = useState(0)
+  useEffect(() => {
+    if (!pending) return
+    const timers = [setTimeout(() => setI(1), 2500), setTimeout(() => setI(2), 4500)]
+    return () => {
+      timers.forEach(clearTimeout)
+      setI(0)
+    }
+  }, [pending])
+  return STAGES[i] ?? STAGES[0]
+}
 
 interface Props {
   initial?: Plan | null
@@ -25,6 +45,7 @@ export function PlanForm({ initial, onPlanned }: Props) {
   const [load, setLoad] = useState<number>(initial?.request.load_lb ?? savedLoad())
   const [interval, setIntervalMi] = useState<IntervalMi>(initial?.request.interval_mi ?? 25)
   const mutation = useCreatePlan()
+  const stage = usePendingStage(mutation.isPending)
 
   const tz = useMemo(() => (origin ? tzAt(origin.lat, origin.lon) : browserTz()), [origin])
   const ready = origin !== null && destination !== null
@@ -125,7 +146,8 @@ export function PlanForm({ initial, onPlanned }: Props) {
       >
         {mutation.isPending ? (
           <>
-            <Loader2 className="size-5 animate-spin" aria-hidden="true" /> Checking routes &amp; weather…
+            <Loader2 className="size-5 animate-spin" aria-hidden="true" />
+            <span aria-live="polite">{stage}</span>
           </>
         ) : (
           <>
