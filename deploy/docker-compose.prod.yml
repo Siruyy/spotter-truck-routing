@@ -1,0 +1,57 @@
+# Production stack for Dokploy (raw compose). Images are built by GitHub Actions
+# and pulled from GHCR; Dokploy attaches the domain to the `web` service on 8080.
+services:
+  web:
+    image: ghcr.io/siruyy/spotter-truck-routing-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      API_UPSTREAM: api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    image: ghcr.io/siruyy/spotter-truck-routing-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY}
+      ALLOWED_HOSTS: ${PUBLIC_HOST:-truckroute.siruyy.dev},api,localhost
+      CSRF_TRUSTED_ORIGINS: https://${PUBLIC_HOST:-truckroute.siruyy.dev}
+      DATABASE_URL: postgres://truckroute:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/truckroute
+      REDIS_URL: redis://redis:6379/0
+      TOMTOM_API_KEY: ${TOMTOM_API_KEY:?set TOMTOM_API_KEY}
+      TRUST_CF_CONNECTING_IP: "true"
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+      TOMTOM_DAILY_LIMIT: ${TOMTOM_DAILY_LIMIT:-2000}
+      OPENMETEO_DAILY_LIMIT: ${OPENMETEO_DAILY_LIMIT:-9000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: truckroute
+      POSTGRES_USER: truckroute
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U truckroute"]
+      interval: 5s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

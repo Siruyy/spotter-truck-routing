@@ -1,5 +1,10 @@
 # Local development stack: docker compose up --build
 services:
+  web:
+    build: ./frontend
+    ports: ["8080:8080"]
+    depends_on:
+      api: { condition: service_healthy }
   api:
     build: ./backend
     env_file: .env
