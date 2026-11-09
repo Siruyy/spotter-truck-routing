@@ -1,0 +1,33 @@
+backend/tests/routing/test_tomtom.py
+  s_874b9dace0bb92::t_d5f888f783935e 1-99
+backend/tests/fixtures/tomtom_route_dallas_denver.json
+  s_874b9dace0bb92::t_50d25a227b8bed 1
+backend/routing/tomtom.py
+  s_874b9dace0bb92::t_4e2e66f7025c68 60
+  s_874b9dace0bb92::t_c57cdab37a4f67 1-59,61-127
+backend/tests/routing/test_geometry.py
+  s_874b9dace0bb92::t_1cd0257f44b419 1-75
+backend/routing/geometry.py
+  s_874b9dace0bb92::t_9439f09b078c1e 73
+  s_874b9dace0bb92::t_4e2e66f7025c68 150
+  s_874b9dace0bb92::t_68839ceb38f607 1-72,74-149,151-154
+backend/routing/alternatives.py
+  s_874b9dace0bb92::t_4e2e66f7025c68 44-46,70
+  s_874b9dace0bb92::t_d4863778b92ced 1-43,47-69,71-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "80d93800eacb06138148632fe78bff11248993f7",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
