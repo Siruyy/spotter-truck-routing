@@ -1,0 +1,21 @@
+backend/routing/tomtom.py
+  s_874b9dace0bb92::t_f3ff0895083f99 103
+backend/tests/routing/test_tomtom.py
+  s_874b9dace0bb92::t_42521c9fd61d10 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8c0368e931de5f98238c34f586e1b91dd0c49a1e",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
