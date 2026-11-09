@@ -1,0 +1,46 @@
+backend/plans/admin.py
+  s_874b9dace0bb92::t_cfc1715ff26afc 1
+backend/config/wsgi.py
+  s_874b9dace0bb92::t_2bb2849b98cbe9 1-13,15-16
+  s_874b9dace0bb92::t_4e2e66f7025c68 14
+backend/config/asgi.py
+  s_874b9dace0bb92::t_2bb2849b98cbe9 1-13,15-16
+  s_874b9dace0bb92::t_4e2e66f7025c68 14
+backend/config/settings.py
+  s_874b9dace0bb92::t_2bb2849b98cbe9 1-22,24-33,40-42,50-51,53-55,64-68,70-75,79-87,89-90,92-93,95-96,98-104,106,108-116,118-121
+  s_874b9dace0bb92::t_4e2e66f7025c68 23,34-39,43-49,52,56-63,69,76-78,88,91,94,97,105,107,117,122
+backend/plans/models.py
+  s_874b9dace0bb92::t_cfc1715ff26afc 1
+backend/manage.py
+  s_874b9dace0bb92::t_2bb2849b98cbe9 1-2,4-9,11-21,23
+  s_874b9dace0bb92::t_4e2e66f7025c68 3,10,22
+backend/plans/apps.py
+  s_874b9dace0bb92::t_cfc1715ff26afc 1-4
+  s_874b9dace0bb92::t_4e2e66f7025c68 5-6
+backend/pyproject.toml
+  s_874b9dace0bb92::t_b1d282fbef2cab 1-21,23-30
+  s_874b9dace0bb92::t_50d25a227b8bed 35
+  s_874b9dace0bb92::t_1d8d5ae90146c4 31-34,36-44,46-49
+  s_874b9dace0bb92::t_5dfb2216859eab 22,45
+backend/config/urls.py
+  s_874b9dace0bb92::t_4e2e66f7025c68 17,22
+  s_874b9dace0bb92::t_2bb2849b98cbe9 1-16,18-21,23
+backend/uv.lock
+  s_874b9dace0bb92::t_4abb966f79dcad 1-1249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "335224472c172f312c0b5900c7d246f33de45392",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
