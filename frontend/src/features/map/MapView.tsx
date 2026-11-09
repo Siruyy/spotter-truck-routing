@@ -186,9 +186,11 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
       ref={mapRef}
       initialViewState={US_VIEW}
       mapStyle={MAP_STYLES[theme]}
-      onLoad={() => {
+      onLoad={(e) => {
         findLabelLayer()
         updateViewport()
+        // Start with attribution collapsed to its (i) button; credits are also in the panel footer.
+        e.target.getContainer().querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show')
       }}
       onStyleData={findLabelLayer}
       onMoveEnd={onMoveEnd}

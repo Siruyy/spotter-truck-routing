@@ -1,4 +1,4 @@
-import { ChevronDown, Megaphone } from 'lucide-react'
+import { ChevronDown, Loader2, Megaphone } from 'lucide-react'
 import { useState } from 'react'
 import { useAlerts } from '@/api/hooks'
 import type { RouteAlert } from '@/api/types'
@@ -20,7 +20,12 @@ function until(ends: string | null): string {
 export function AlertsPanel({ planId }: { planId: string }) {
   const { data, isLoading, isError } = useAlerts(planId)
   const [open, setOpen] = useState<string | null>(null)
-  if (isLoading) return <div className="h-14 animate-pulse rounded-2xl bg-raised" aria-label="Loading weather alerts" />
+  if (isLoading)
+    return (
+      <p className="flex items-center gap-2 px-1 text-sm text-muted" role="status">
+        <Loader2 className="size-4 animate-spin" aria-hidden="true" /> Checking official NWS alerts along your routes…
+      </p>
+    )
   if (isError || !data || data.alerts.length === 0) return null
   return (
     <section className="rounded-2xl border border-line bg-panel" aria-label="Official weather alerts">
