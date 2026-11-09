@@ -60,11 +60,10 @@ async def three_routes(
         if len(kept) < TARGET_ROUTES and is_distinct(route, kept):
             kept.append(route)
 
-    primary = kept[0]
-    for factor in OFFSET_FACTORS:
-        if len(kept) >= TARGET_ROUTES:
-            break
-        vias = via_points(primary, origin, destination, factor)
+    if len(kept) < TARGET_ROUTES:
+        primary = kept[0]
+        # All forced alternatives in one parallel round: latency over quota.
+        vias = [v for f in OFFSET_FACTORS for v in via_points(primary, origin, destination, f)]
         results = await asyncio.gather(
             *(
                 calculate_routes(origin, destination, depart_at=depart_at, load_lb=load_lb, via=v)

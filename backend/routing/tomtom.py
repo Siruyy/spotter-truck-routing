@@ -28,7 +28,13 @@ class RawRoute:
     length_m: float
     duration_s: float
     traffic_delay_s: float
-    road_names: tuple[str, ...]
+    roads: tuple[tuple[str, float], ...]  # (road number, metres) in travel order
+
+    @property
+    def road_names(self) -> tuple[str, ...]:
+        """The two roads carrying the most distance, in travel order."""
+        top = sorted(self.roads, key=lambda r: r[1], reverse=True)[:2]
+        return tuple(name for name, _ in self.roads if (name, _) in top)
 
 
 def gross_weight_kg(load_lb: float) -> int:
@@ -39,10 +45,11 @@ def _fmt_point(p: LatLon) -> str:
     return f"{p[0]:.6f},{p[1]:.6f}"
 
 
-def _main_roads(instructions: Sequence[dict[str, Any]], length_m: float) -> tuple[str, ...]:
-    """The two road numbers that carry the most distance, in travel order."""
+def _roads(
+    instructions: Sequence[dict[str, Any]], length_m: float
+) -> tuple[tuple[str, float], ...]:
+    """Distance driven on each numbered road, in order of first use."""
     distance: dict[str, float] = defaultdict(float)
-    first_seen: dict[str, int] = {}
     for i, ins in enumerate(instructions):
         roads = ins.get("roadNumbers") or []
         if not roads:
@@ -50,9 +57,7 @@ def _main_roads(instructions: Sequence[dict[str, Any]], length_m: float) -> tupl
         nxt = instructions[i + 1]["routeOffsetInMeters"] if i + 1 < len(instructions) else length_m
         name = _DIRECTION_SUFFIX.sub("", roads[0])
         distance[name] += max(0.0, nxt - ins["routeOffsetInMeters"])
-        first_seen.setdefault(name, i)
-    top = sorted(distance, key=lambda r: distance[r], reverse=True)[:2]
-    return tuple(sorted(top, key=lambda r: first_seen[r]))
+    return tuple((name, round(m)) for name, m in distance.items())
 
 
 def parse_route(route: dict[str, Any]) -> RawRoute:
@@ -84,7 +89,7 @@ def parse_route(route: dict[str, Any]) -> RawRoute:
         length_m=length_m,
         duration_s=duration_s,
         traffic_delay_s=float(summary.get("trafficDelayInSeconds", 0)),
-        road_names=_main_roads(instructions, length_m),
+        roads=_roads(instructions, length_m),
     )
 
 
