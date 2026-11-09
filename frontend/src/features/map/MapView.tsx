@@ -67,6 +67,22 @@ const levelColor: unknown[] = ['match', ['get', 'level']]
 for (const l of LEVELS) levelColor.push(l.level, l.color)
 levelColor.push(UNKNOWN_META.color)
 
+function routesBbox(routes: PlannedRoute[]): Bbox {
+  let w = 180
+  let s = 90
+  let e = -180
+  let n = -90
+  for (const r of routes)
+    for (const [lon, lat] of r.geometry) {
+      w = Math.min(w, lon)
+      e = Math.max(e, lon)
+      s = Math.min(s, lat)
+      n = Math.max(n, lat)
+    }
+  const pad = 1
+  return [w - pad, s - pad, e + pad, n + pad]
+}
+
 function fitPlan(map: MapRef, routes: PlannedRoute[], padding: PaddingOptions) {
   let w = 180
   let s = 90
@@ -80,6 +96,36 @@ function fitPlan(map: MapRef, routes: PlannedRoute[], padding: PaddingOptions) {
       n = Math.max(n, lat)
     }
   if (w < e) map.fitBounds([w, s, e, n], { padding, duration: 900, maxZoom: 9 })
+}
+
+/**
+ * Place each route's letter where it is farthest from the other letters
+ * (sampling the middle 60% of each line), so pins don't stack where routes share road.
+ */
+function pinPositions(routes: PlannedRoute[]): { route: PlannedRoute; at: [number, number] }[] {
+  const placed: [number, number][] = []
+  return routes.map((route) => {
+    const g = route.geometry
+    let best = g[Math.floor(g.length / 2)] as [number, number]
+    let bestScore = -1
+    for (let k = 0; k <= 12; k++) {
+      const p = g[Math.floor(g.length * (0.2 + (0.6 * k) / 12))] as [number, number] | undefined
+      if (!p) continue
+      const nearest = placed.length ? Math.min(...placed.map((q) => (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2)) : 1
+      // Distance to *other* routes' lines also matters: prefer stretches unique to this route.
+      const others = routes.filter((o) => o.id !== route.id)
+      const apart = others.length
+        ? Math.min(...others.map((o) => Math.min(...o.geometry.filter((_, i) => i % 8 === 0).map((q) => (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2))))
+        : 1
+      const score = Math.min(nearest, 4) + apart * 4
+      if (score > bestScore) {
+        bestScore = score
+        best = p
+      }
+    }
+    placed.push(best)
+    return { route, at: best }
+  })
 }
 
 export function MapView({ padding, showZoom = false }: { padding: PaddingOptions; showZoom?: boolean }) {
@@ -100,8 +146,15 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
   const [zoomedOut, setZoomedOut] = useState(false)
 
   const planHeat = usePlanHeatmap(plan?.id ?? null, heatVisible && plan !== null)
-  const viewHeat = useViewportHeatmap(viewBbox, null, heatVisible && plan === null && !zoomedOut)
-  const heat = plan ? planHeat : viewHeat
+  // Shared or offline plans may have expired server-side: fall back to a heatmap of the trip's area.
+  const planBbox = useMemo(() => (plan ? routesBbox(plan.routes) : null), [plan])
+  const usePlanFallback = plan !== null && planHeat.isError
+  const viewHeat = useViewportHeatmap(
+    usePlanFallback ? planBbox : viewBbox,
+    usePlanFallback ? (plan?.request.load_lb ?? null) : null,
+    heatVisible && (usePlanFallback || (plan === null && !zoomedOut)),
+  )
+  const heat = plan && !usePlanFallback ? planHeat : viewHeat
   const frames = useHeatmapFrames(heatVisible ? (heat.data ?? null) : null, heatLayer)
 
   useEffect(() => {
@@ -287,27 +340,26 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
 
       <HeatmapOverlay frames={frames} visible={heatVisible} beforeId="route-other-casing" />
 
-      {plan?.routes.map((r) => {
-        const mid = r.geometry[Math.floor(r.geometry.length * (r.id === 'A' ? 0.42 : r.id === 'B' ? 0.55 : 0.68))]
-        if (!mid) return null
-        const isSel = r.id === selectedId
-        return (
-          <Marker key={r.id} longitude={mid[0]} latitude={mid[1]} anchor="center">
-            <button
-              type="button"
-              className={`route-pin ${isSel ? 'route-pin--active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation()
-                selectRoute(r.id)
-              }}
-              aria-label={`Select route ${r.id}`}
-              aria-pressed={isSel}
-            >
-              {r.id}
-            </button>
-          </Marker>
-        )
-      })}
+      {plan &&
+        pinPositions(plan.routes).map(({ route: r, at }) => {
+          const isSel = r.id === selectedId
+          return (
+            <Marker key={r.id} longitude={at[0]} latitude={at[1]} anchor="center">
+              <button
+                type="button"
+                className={`route-pin ${isSel ? 'route-pin--active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  selectRoute(r.id)
+                }}
+                aria-label={`Select route ${r.id}`}
+                aria-pressed={isSel}
+              >
+                {r.id}
+              </button>
+            </Marker>
+          )
+        })}
 
       {plan && (
         <>
