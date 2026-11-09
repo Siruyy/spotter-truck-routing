@@ -1,0 +1,20 @@
+frontend/src/features/map/heatmap/useHeatmapFrames.ts
+  s_874b9dace0bb92::t_ee9a5a2602ba9f 19,35-36,69,72
+  s_874b9dace0bb92::t_06b10e8a23197c 21-22,34,37,53,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ebcd1da1b4926bfb34cc9ca3de7a0140623c6515",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
