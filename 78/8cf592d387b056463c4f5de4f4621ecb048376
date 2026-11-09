@@ -1,0 +1,40 @@
+backend/tests/weather/test_weather.py
+  s_874b9dace0bb92::t_51f586ca444299 43
+  s_874b9dace0bb92::t_9adc639e7555bf 1-42,44-172
+backend/weather/alerts.py
+  s_874b9dace0bb92::t_9f84961c467ba6 1-129
+backend/weather/service.py
+  s_874b9dace0bb92::t_4e2e66f7025c68 6,69-71
+  s_874b9dace0bb92::t_994cb6364f9ea3 1-5,7-68,72-158
+backend/tests/fixtures/nws_grid.json
+  s_874b9dace0bb92::t_b5e974646f770e 1-6556
+backend/weather/openmeteo.py
+  s_874b9dace0bb92::t_816e7ac2ad5287 1-75
+backend/tests/weather/test_alerts.py
+  s_874b9dace0bb92::t_7dc637a489f672 1-53
+backend/weather/nws.py
+  s_874b9dace0bb92::t_b8a1e6e9d321e3 1-125
+backend/weather/models.py
+  s_874b9dace0bb92::t_3083729a44c91f 1-56,58-91
+  s_874b9dace0bb92::t_3c70eb2a94270a 57
+backend/tests/fixtures/nws_points.json
+  s_874b9dace0bb92::t_b5e974646f770e 1-112
+backend/tests/fixtures/openmeteo_two.json
+  s_874b9dace0bb92::t_60c60959f9e4d1 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "788cf592d387b056463c4f5de4f4621ecb048376",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
