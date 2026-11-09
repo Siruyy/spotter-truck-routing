@@ -14,7 +14,7 @@ from django.conf import settings
 
 from core.errors import UpstreamError
 from core.quota import openmeteo_budget_left
-from core.redis import get_redis, set_json_value
+from core.redis import get_redis
 from weather import nws, openmeteo
 from weather.models import HOUR_S, Cell, CellForecast
 
@@ -58,9 +58,13 @@ async def _read_cache(cells: Sequence[Cell]) -> dict[Cell, CellForecast]:
 
 
 async def _write_cache(forecasts: dict[Cell, CellForecast]) -> None:
-    await asyncio.gather(
-        *(set_json_value(_key(c), fc.to_dict(), STORE_TTL_S) for c, fc in forecasts.items())
-    )
+    """One pipelined round trip, not one connection per cell."""
+    if not forecasts:
+        return
+    pipe = get_redis().pipeline(transaction=False)
+    for cell, fc in forecasts.items():
+        pipe.set(_key(cell), json.dumps(fc.to_dict(), separators=(",", ":")), ex=STORE_TTL_S)
+    await pipe.execute()
 
 
 _inflight: dict[Cell, asyncio.Future[CellForecast | None]] = {}
