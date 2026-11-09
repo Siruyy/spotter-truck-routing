@@ -1,0 +1,31 @@
+frontend/src/features/plan-form/DepartureField.tsx
+  s_874b9dace0bb92::t_52b70ba511536f 1-92
+frontend/src/components/ui/Segmented.tsx
+  s_874b9dace0bb92::t_7fafe5821d7315 1-44
+frontend/src/features/plan-form/LoadField.tsx
+  s_874b9dace0bb92::t_a8fa08b5cdcd70 1-70
+frontend/src/components/ui/RoadShield.tsx
+  s_874b9dace0bb92::t_13518ed5458be3 1-45
+frontend/src/features/plan-form/PlaceInput.tsx
+  s_874b9dace0bb92::t_ff3dcd4653757d 1-200
+frontend/src/features/plan-form/PlanForm.tsx
+  s_874b9dace0bb92::t_920a5c9e4d92d7 1-137
+frontend/src/components/ui/RiskChip.tsx
+  s_874b9dace0bb92::t_5c62773b1e532d 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1da178baa73dbc0f2c11164e57f0e134dcb575bd",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
