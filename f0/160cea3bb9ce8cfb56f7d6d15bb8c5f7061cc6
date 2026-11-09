@@ -1,0 +1,24 @@
+backend/Dockerfile
+  s_874b9dace0bb92::t_fddd5aeb35a923 1-22
+  s_874b9dace0bb92::t_9d1e6a2b0927bf 23
+docker-compose.yml
+  s_874b9dace0bb92::t_9d1e6a2b0927bf 1-33
+backend/.dockerignore
+  s_874b9dace0bb92::t_ee9a3182d9ba18 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f0160cea3bb9ce8cfb56f7d6d15bb8c5f7061cc6",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
