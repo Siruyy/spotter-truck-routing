@@ -1,0 +1,21 @@
+deploy/docker-compose.prod.yml
+  s_874b9dace0bb92::t_8e22761a8bb9df 9-11,18,20-22
+  s_874b9dace0bb92::t_8af008c085c07c 25
+  s_874b9dace0bb92::t_be17de0b7783c5 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8a5a600f4affdb41b22da9975a639db1ae5f7aab",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
