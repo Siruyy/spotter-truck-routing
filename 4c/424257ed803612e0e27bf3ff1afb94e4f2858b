@@ -1,0 +1,35 @@
+backend/config/settings_test.py
+  s_874b9dace0bb92::t_25857633acff43 1-8
+backend/core/middleware.py
+  s_874b9dace0bb92::t_8a025477693431 1-35
+backend/core/http.py
+  s_874b9dace0bb92::t_ac8bc50ea5e663 1-69
+backend/pyproject.toml
+  s_874b9dace0bb92::t_25857633acff43 33
+backend/core/redis.py
+  s_874b9dace0bb92::t_f08d5ccaf82567 1-34
+backend/tests/conftest.py
+  s_874b9dace0bb92::t_5ebcffd44c306d 1-34
+backend/config/settings.py
+  s_874b9dace0bb92::t_81f07a5104d4fb 1,3,5,8-9,13-17,20-21,24-25,27-33,38,44,48,52-54,56,60,64-92
+backend/core/errors.py
+  s_874b9dace0bb92::t_01687f6e00ffa8 1-36
+backend/core/quota.py
+  s_874b9dace0bb92::t_b031ece0c8a4cc 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4c424257ed803612e0e27bf3ff1afb94e4f2858b",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
