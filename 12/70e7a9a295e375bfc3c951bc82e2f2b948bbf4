@@ -1,0 +1,22 @@
+backend/geo/search.py
+  s_874b9dace0bb92::t_9fd19164b232b3 69-74,78
+  s_874b9dace0bb92::t_8f7c161d973761 75-77
+backend/tests/geo/test_search.py
+  s_874b9dace0bb92::t_9fd19164b232b3 34-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1270e7a9a295e375bfc3c951bc82e2f2b948bbf4",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
