@@ -1,0 +1,35 @@
+backend/plans/migrations/0001_shared_plan.py
+  s_874b9dace0bb92::t_b0dfd4fefdd91e 1-25
+backend/config/api.py
+  s_874b9dace0bb92::t_8c945c3b179b6d 1-5,7-19,21-28,32-96,100-136,140-160
+  s_874b9dace0bb92::t_0cc65865fbe514 29-31,137-139
+  s_874b9dace0bb92::t_e873c5ecd06ed2 6,20,97-99
+backend/tests/plans/test_api.py
+  s_874b9dace0bb92::t_7f225e87bf6c36 1-167
+  s_874b9dace0bb92::t_515a7e4bd9d691 168-175
+backend/plans/schemas.py
+  s_874b9dace0bb92::t_b62b02730bf0f7 1-35
+backend/plans/service.py
+  s_874b9dace0bb92::t_21a70cdb2bbc33 1-176,178-281,283-337
+  s_874b9dace0bb92::t_0cc65865fbe514 177,282
+backend/plans/models.py
+  s_874b9dace0bb92::t_78c2dc7c08bc02 1-15
+backend/config/urls.py
+  s_874b9dace0bb92::t_71b8ddbddef98b 3-4,6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5824d98e0ab82475a05a3ba7c4009f537b98d966",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
