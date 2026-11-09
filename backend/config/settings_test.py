@@ -5,4 +5,4 @@ import os
 os.environ.setdefault("DJANGO_SECRET_KEY", "test-only-secret")
 os.environ.setdefault("DATABASE_URL", "sqlite://:memory:")
 
-from config.settings import *  # noqa: E402,F403
+from config.settings import *  # noqa: F403

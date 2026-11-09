@@ -17,7 +17,8 @@ def load_fixture(name: str) -> Any:
 
 
 @pytest.fixture(autouse=True)
-def _test_settings(settings: Any) -> None:
+def _test_settings(settings: Any, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("core.http.RETRY_BACKOFF_S", 0.0)
     settings.TOMTOM_API_KEY = "test-key"
     settings.TOMTOM_DAILY_LIMIT = 1000
     settings.OPENMETEO_DAILY_LIMIT = 9000

@@ -1,3 +1,4 @@
+import itertools
 from datetime import UTC, datetime
 
 import httpx
@@ -33,7 +34,7 @@ def test_parse_route_real_fixture(tomtom_payload: dict) -> None:
     assert len(route.road_names) == 2
     # Time profile is monotone and ends at the summary duration.
     secs = route.time_profile.seconds
-    assert all(b >= a for a, b in zip(secs, secs[1:], strict=False))
+    assert all(b >= a for a, b in itertools.pairwise(secs))
     assert secs[-1] == pytest.approx(43_161)
     assert route.time_profile.seconds_at(route.polyline.length_m / 2) == pytest.approx(
         21_500, rel=0.15

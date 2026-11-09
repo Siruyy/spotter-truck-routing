@@ -28,9 +28,7 @@ def env_int(name: str, default: int) -> int:
 DEBUG = env_bool("DJANGO_DEBUG", False)
 SECRET_KEY = env("DJANGO_SECRET_KEY", "dev-insecure-key-change-me" if DEBUG else None)
 ALLOWED_HOSTS = [h.strip() for h in env("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")]
-CSRF_TRUSTED_ORIGINS = [
-    o.strip() for o in env("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
-]
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in env("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
