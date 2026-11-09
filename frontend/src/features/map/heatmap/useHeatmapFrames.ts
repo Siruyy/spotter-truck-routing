@@ -16,9 +16,10 @@ export interface HeatFrames {
  */
 export function useHeatmapFrames(heatmap: Heatmap | null, layer: HeatLayer): HeatFrames | null {
   const workerRef = useRef<Worker | null>(null)
-  const cache = useRef(new WeakMap<Heatmap, Map<HeatLayer, HeatFrames>>())
+  const [cache] = useState(() => new WeakMap<Heatmap, Map<HeatLayer, HeatFrames>>())
   const reqId = useRef(0)
-  const [frames, setFrames] = useState<HeatFrames | null>(null)
+  // Bumped when a bake finishes so render re-reads the cache.
+  const [, setVersion] = useState(0)
 
   useEffect(() => {
     const worker = new Worker(new URL('./bake.worker.ts', import.meta.url), { type: 'module' })
@@ -30,17 +31,10 @@ export function useHeatmapFrames(heatmap: Heatmap | null, layer: HeatLayer): Hea
   }, [])
 
   useEffect(() => {
-    if (!heatmap || heatmap.points.length === 0) {
-      setFrames(null)
-      return
-    }
-    const perHeat = cache.current.get(heatmap) ?? new Map<HeatLayer, HeatFrames>()
-    cache.current.set(heatmap, perHeat)
-    const hit = perHeat.get(layer)
-    if (hit) {
-      setFrames(hit)
-      return
-    }
+    if (!heatmap || heatmap.points.length === 0) return
+    const perHeat = cache.get(heatmap) ?? new Map<HeatLayer, HeatFrames>()
+    cache.set(heatmap, perHeat)
+    if (perHeat.has(layer)) return
     const worker = workerRef.current
     if (!worker) return
     const id = ++reqId.current
@@ -56,7 +50,7 @@ export function useHeatmapFrames(heatmap: Heatmap | null, layer: HeatLayer): Hea
         start: heatmap.start,
       }
       perHeat.set(layer, baked)
-      if (reqId.current === id) setFrames(baked)
+      if (reqId.current === id) setVersion((v) => v + 1)
     }
     worker.addEventListener('message', onMessage)
     const request: BakeRequest = {
@@ -72,7 +66,8 @@ export function useHeatmapFrames(heatmap: Heatmap | null, layer: HeatLayer): Hea
     }
     worker.postMessage(request)
     return () => worker.removeEventListener('message', onMessage)
-  }, [heatmap, layer])
+  }, [heatmap, layer, cache])
 
-  return frames
+  if (!heatmap) return null
+  return cache.get(heatmap)?.get(layer) ?? null
 }
