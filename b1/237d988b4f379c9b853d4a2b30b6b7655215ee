@@ -1,0 +1,25 @@
+frontend/src/app/BottomSheet.tsx
+  s_874b9dace0bb92::t_de91d43ab2b448 1-69
+frontend/src/app/App.tsx
+  s_874b9dace0bb92::t_7a6a02a2341383 1,3-65,67,69,74-160,164-167,169-198
+  s_874b9dace0bb92::t_8633e810a37bb5 2,66,68,70-73,161-163
+  s_874b9dace0bb92::t_d519cdd684b9d7 168
+frontend/src/app/HowItWorks.tsx
+  s_874b9dace0bb92::t_9a0cc37e976410 1-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b1237d988b4f379c9b853d4a2b30b6b7655215ee",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
