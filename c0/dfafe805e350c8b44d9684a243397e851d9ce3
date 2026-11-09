@@ -1,0 +1,21 @@
+.env.example
+  s_874b9dace0bb92::t_dc88b14fc364a4 1-16
+.github/workflows/ci.yml
+  s_874b9dace0bb92::t_dc88b14fc364a4 1-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c0dfafe805e350c8b44d9684a243397e851d9ce3",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
