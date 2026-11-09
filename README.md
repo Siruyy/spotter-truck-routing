@@ -195,4 +195,4 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 - **Precipitation** is model output at about 3–11 km resolution, so short, intense cells can be missed.
 - **Better departure time** doesn't re-query traffic.
 - **NWS fallback** rain and snow are 6-hour averages, and the UI labels them that way.
-- **Basemap tiles** are not cached for offline use: the last trip's data is, but the map may be blank offline.
+- **Offline mode** caches only the basemap tiles you have already viewed (capped at 1,500, per OpenFreeMap's terms), so unvisited zoom levels stay blank offline.
