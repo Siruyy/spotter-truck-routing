@@ -1,0 +1,57 @@
+frontend/tsconfig.node.json
+  s_874b9dace0bb92::t_a0fc879b00b388 1-23
+.claude/launch.json
+  s_874b9dace0bb92::t_13b7065a071a8f 1-11
+frontend/.oxlintrc.json
+  s_874b9dace0bb92::t_a0fc879b00b388 1-8
+frontend/.gitignore
+  s_874b9dace0bb92::t_a0fc879b00b388 1-24
+  s_874b9dace0bb92::t_cb1ef6f5e6de43 25
+frontend/src/test/setup.ts
+  s_874b9dace0bb92::t_e18baeeac83e8f 1
+frontend/tsconfig.json
+  s_874b9dace0bb92::t_a0fc879b00b388 1-7
+frontend/src/main.tsx
+  s_874b9dace0bb92::t_e18baeeac83e8f 1,4,7-14,16-18
+  s_874b9dace0bb92::t_a0fc879b00b388 2-3,5-6,15,19-20
+frontend/src/index.css
+  s_874b9dace0bb92::t_e339f18e40a0c5 19
+  s_874b9dace0bb92::t_352d1aee4986da 1-7,9-18,20-34,37-52,54-66,70-71,73,78-84,87-91,94-96,98-104,107-110,112-138,140-214,216-251
+  s_874b9dace0bb92::t_a0fc879b00b388 8,35-36,53,67-68,72,74-77,85-86,92-93,97,105-106,139,215,252
+  s_874b9dace0bb92::t_77bb2ddacf9b01 69,111
+frontend/vite.config.ts
+  s_874b9dace0bb92::t_cb1ef6f5e6de43 4,6,9-26,29
+  s_874b9dace0bb92::t_22371db6d6acf0 1-2,5,7,28,30-86
+  s_874b9dace0bb92::t_a0fc879b00b388 3,8,27,87
+frontend/package.json
+  s_874b9dace0bb92::t_d47448c8497a61 13-24,26-27
+  s_874b9dace0bb92::t_2cb94ecfc59b3f 30-34,40,42,44-46
+  s_874b9dace0bb92::t_e18baeeac83e8f 35
+  s_874b9dace0bb92::t_a0fc879b00b388 1-12,25,28-29,36-39,41,43,47-48
+frontend/public/favicon.svg
+  s_874b9dace0bb92::t_e18baeeac83e8f 1
+frontend/index.html
+  s_874b9dace0bb92::t_e18baeeac83e8f 2,6-10
+  s_874b9dace0bb92::t_a0fc879b00b388 1,3-5,11-16
+frontend/tsconfig.app.json
+  s_874b9dace0bb92::t_a0fc879b00b388 1-6,8-17,19-20,23-29
+  s_874b9dace0bb92::t_22371db6d6acf0 7,18,21-22
+frontend/package-lock.json
+  s_874b9dace0bb92::t_0108f832e76641 1-9239
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f9b70d7c640a70a9483e35bb8676dc16360f1c36",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
