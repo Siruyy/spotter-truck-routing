@@ -1,0 +1,36 @@
+frontend/src/features/plan-form/DepartureField.tsx
+  s_874b9dace0bb92::t_06b10e8a23197c 3-4
+frontend/src/features/map/MapView.tsx
+  s_874b9dace0bb92::t_b9817141c140e3 85,203
+frontend/src/features/plan-form/PlanForm.tsx
+  s_874b9dace0bb92::t_06b10e8a23197c 10-11
+frontend/src/app/BottomSheet.tsx
+  s_874b9dace0bb92::t_06b10e8a23197c 4
+  s_874b9dace0bb92::t_d89107f944f116 1,9,62-64
+frontend/src/features/timeline/TimeSlider.tsx
+  s_874b9dace0bb92::t_b9817141c140e3 31,98-101,103,113-114,142-143,145-149,153-162,174-183,185-186,223
+frontend/src/app/App.tsx
+  s_874b9dace0bb92::t_06b10e8a23197c 12-13
+  s_874b9dace0bb92::t_b9817141c140e3 170,193,195
+  s_874b9dace0bb92::t_d89107f944f116 16,25-27,186-187,198
+frontend/src/app/sheet.ts
+  s_874b9dace0bb92::t_06b10e8a23197c 1-8
+frontend/src/features/plan-form/departure.ts
+  s_874b9dace0bb92::t_06b10e8a23197c 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c5e54715727a3cb1c73b901d52649615fbacd549",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
