@@ -1,0 +1,42 @@
+frontend/src/features/map/HeatmapOverlay.tsx
+  s_874b9dace0bb92::t_3a8b1dacaef9f3 1-69
+frontend/src/features/map/setupMaplibre.ts
+  s_874b9dace0bb92::t_f9ad436f8d1e19 1-2
+  s_874b9dace0bb92::t_cb1ef6f5e6de43 3-5
+frontend/src/features/map/heatmap/useHeatmapFrames.ts
+  s_874b9dace0bb92::t_a80cb7cb55676f 1-2,4-46,49-54,56-66,68-78
+  s_874b9dace0bb92::t_16304babecd7e1 3,47-48,55,67
+frontend/src/features/map/heatmap/bake.worker.ts
+  s_874b9dace0bb92::t_adf1e1424eec5f 13-18,20,30
+  s_874b9dace0bb92::t_f1c0d4a8a6744b 1-12,19,21-25,27-29,31
+  s_874b9dace0bb92::t_73bb4b371f89cc 26
+frontend/src/features/map/mapStyle.ts
+  s_874b9dace0bb92::t_fafb77627d25e6 1-11
+frontend/src/features/map/TruckMarker.tsx
+  s_874b9dace0bb92::t_325c31605cf9a2 2,22
+  s_874b9dace0bb92::t_70cc9bfb65aa9a 1,3-21,23-60
+frontend/src/features/map/MapView.tsx
+  s_874b9dace0bb92::t_f9ad436f8d1e19 14
+  s_874b9dace0bb92::t_325c31605cf9a2 12,70,85
+  s_874b9dace0bb92::t_6150ba520ad41d 1-11,13,15-69,71-84,86-340
+frontend/src/features/map/heatmap/bake.ts
+  s_874b9dace0bb92::t_73bb4b371f89cc 66-68,99,103,108-116,124-125,127-131,135-137,141-156,159,168,171-173,177,181,183-189
+  s_874b9dace0bb92::t_1f6391b407818b 1-29,33-65,69-98,100-102,104-107,117-123,126,132-134,138-140,157-158,160-167,169-170,174-176,178-180,182,190-193,210-219
+  s_874b9dace0bb92::t_16304babecd7e1 30-32,194-209
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9f8358869e93796f755b900dc0e939f8d1ebf4d6",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
