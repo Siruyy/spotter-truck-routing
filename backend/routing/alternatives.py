@@ -41,48 +41,61 @@ def is_distinct(candidate: RawRoute, kept: list[RawRoute]) -> bool:
     )
 
 
-def via_points(
-    primary: RawRoute, origin: LatLon, destination: LatLon, factor: float
-) -> list[LatLon]:
+def via_points(origin: LatLon, destination: LatLon, factor: float) -> list[LatLon]:
+    """Two via points either side of the trip's great-circle midpoint."""
     straight = haversine_m(origin, destination)
     offset = min(max(factor * straight, MIN_OFFSET_M), MAX_OFFSET_M)
-    mid = primary.polyline.point_at(primary.polyline.length_m / 2)
     bearing = initial_bearing_deg(origin, destination)
+    mid = destination_point(origin, bearing, straight / 2)
     return [destination_point(mid, (bearing + side) % 360, offset) for side in (-90, 90)]
 
 
 async def three_routes(
     origin: LatLon, destination: LatLon, *, depart_at: datetime, load_lb: float
 ) -> list[RawRoute]:
-    candidates = await calculate_routes(origin, destination, depart_at=depart_at, load_lb=load_lb)
+    """Primary request and forced alternatives run concurrently (latency over quota);
+    forced ones are only used when TomTom's own alternatives fall short."""
+    vias = [v for f in OFFSET_FACTORS for v in via_points(origin, destination, f)]
+    forced = [
+        asyncio.create_task(
+            calculate_routes(origin, destination, depart_at=depart_at, load_lb=load_lb, via=v)
+        )
+        for v in vias
+    ]
+    try:
+        candidates = await calculate_routes(
+            origin, destination, depart_at=depart_at, load_lb=load_lb
+        )
+    except BaseException:
+        for task in forced:
+            task.cancel()
+        await asyncio.gather(*forced, return_exceptions=True)
+        raise
+
     kept: list[RawRoute] = []
     for route in candidates:
         if len(kept) < TARGET_ROUTES and is_distinct(route, kept):
             kept.append(route)
 
-    if len(kept) < TARGET_ROUTES:
-        primary = kept[0]
-        # All forced alternatives in one parallel round: latency over quota.
-        vias = [v for f in OFFSET_FACTORS for v in via_points(primary, origin, destination, f)]
-        results = await asyncio.gather(
-            *(
-                calculate_routes(origin, destination, depart_at=depart_at, load_lb=load_lb, via=v)
-                for v in vias
-            ),
-            return_exceptions=True,
-        )
-        for result in results:
-            if isinstance(result, UpstreamError):
-                logger.info("forced alternative failed: %s", result.code)
-                continue
-            if isinstance(result, BaseException):
-                raise result
-            for route in result:
-                if (
-                    len(kept) < TARGET_ROUTES
-                    and route.duration_s <= primary.duration_s * MAX_DURATION_RATIO
-                    and is_distinct(route, kept)
-                ):
-                    kept.append(route)
+    if len(kept) >= TARGET_ROUTES:
+        for task in forced:
+            task.cancel()
+        await asyncio.gather(*forced, return_exceptions=True)
+        return sorted(kept, key=lambda r: r.duration_s)
+
+    primary = kept[0]
+    for result in await asyncio.gather(*forced, return_exceptions=True):
+        if isinstance(result, UpstreamError):
+            logger.info("forced alternative failed: %s", result.code)
+            continue
+        if isinstance(result, BaseException):
+            raise result
+        for route in result:
+            if (
+                len(kept) < TARGET_ROUTES
+                and route.duration_s <= primary.duration_s * MAX_DURATION_RATIO
+                and is_distinct(route, kept)
+            ):
+                kept.append(route)
 
     return sorted(kept, key=lambda r: r.duration_s)
