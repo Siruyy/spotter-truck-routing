@@ -28,7 +28,7 @@ function StepButton({ label, onClick, children }: { label: string; onClick: () =
   )
 }
 
-export function TimeSlider({ tz }: { tz: string }) {
+export function TimeSlider({ tz, compact = false }: { tz: string; compact?: boolean }) {
   const hour = useUi((s) => s.hour)
   const setHour = useUi((s) => s.setHour)
   const playing = useUi((s) => s.playing)
@@ -95,9 +95,12 @@ export function TimeSlider({ tz }: { tz: string }) {
   return (
     <section
       aria-label="Forecast timeline"
-      className="pointer-events-auto rounded-2xl border border-line bg-panel/95 p-2.5 shadow-[0_10px_40px_rgb(0_0_0/0.35)] backdrop-blur"
+      className={cn(
+        'pointer-events-auto rounded-2xl border border-line bg-panel/95 shadow-[0_10px_40px_rgb(0_0_0/0.35)] backdrop-blur',
+        compact ? 'p-2' : 'p-2.5',
+      )}
     >
-      <div className="flex flex-wrap items-center gap-2 px-1">
+      <div className={cn('flex items-center px-1', compact ? 'gap-1' : 'flex-wrap gap-2')}>
         <div role="radiogroup" aria-label="Heatmap layer" className="flex gap-1 rounded-xl bg-sunken p-1">
           {LAYERS.map((l) => (
             <button
@@ -107,7 +110,8 @@ export function TimeSlider({ tz }: { tz: string }) {
               aria-checked={visible && layer === l.value}
               onClick={() => setLayer(l.value)}
               className={cn(
-                'min-h-9 rounded-lg px-3 text-sm font-semibold',
+                'min-h-9 rounded-lg text-sm font-semibold',
+                compact ? 'px-2.5' : 'px-3',
                 visible && layer === l.value ? 'bg-raised text-fg shadow-[0_0_0_1px_var(--tr-line-strong)]' : 'text-muted hover:text-fg',
               )}
             >
@@ -135,20 +139,27 @@ export function TimeSlider({ tz }: { tz: string }) {
           )}
           title="Observed NEXRAD radar right now (not a forecast)"
         >
-          <Radar className="size-4" aria-hidden="true" /> Radar now
+          <Radar className="size-4" aria-hidden="true" />
+          {compact ? <span className="sr-only">Radar now</span> : 'Radar now'}
         </button>
-        <div className="ml-auto hidden md:block">
-          <Legend layer={layer} />
-        </div>
+        {!compact && (
+          <div className="ml-auto">
+            <Legend layer={layer} />
+          </div>
+        )}
       </div>
 
       <div className="mt-1 flex items-center gap-1">
-        <StepButton label="Back 6 hours" onClick={() => stepTo(hour - 6)}>
-          <ChevronsLeft className="size-5" />
-        </StepButton>
-        <StepButton label="Back 1 hour" onClick={() => stepTo(hour - 1)}>
-          <ChevronLeft className="size-5" />
-        </StepButton>
+        {!compact && (
+          <StepButton label="Back 6 hours" onClick={() => stepTo(hour - 6)}>
+            <ChevronsLeft className="size-5" />
+          </StepButton>
+        )}
+        {!compact && (
+          <StepButton label="Back 1 hour" onClick={() => stepTo(hour - 1)}>
+            <ChevronLeft className="size-5" />
+          </StepButton>
+        )}
         <button
           type="button"
           onClick={() => {
@@ -160,15 +171,19 @@ export function TimeSlider({ tz }: { tz: string }) {
         >
           {playing ? <Pause className="size-5 fill-current" /> : <Play className="size-5 translate-x-px fill-current" />}
         </button>
-        <StepButton label="Forward 1 hour" onClick={() => stepTo(hour + 1)}>
-          <ChevronRight className="size-5" />
-        </StepButton>
-        <StepButton label="Forward 6 hours" onClick={() => stepTo(hour + 6)}>
-          <ChevronsRight className="size-5" />
-        </StepButton>
+        {!compact && (
+          <StepButton label="Forward 1 hour" onClick={() => stepTo(hour + 1)}>
+            <ChevronRight className="size-5" />
+          </StepButton>
+        )}
+        {!compact && (
+          <StepButton label="Forward 6 hours" onClick={() => stepTo(hour + 6)}>
+            <ChevronsRight className="size-5" />
+          </StepButton>
+        )}
 
-        <div className="ml-2 w-28 shrink-0 leading-tight" aria-live="off">
-          <div className="font-display text-[19px] font-bold">{snapped === 0 ? 'Now' : dayHour(at, tz)}</div>
+        <div className={cn('shrink-0 leading-tight', compact ? 'ml-1 w-[5.5rem]' : 'ml-2 w-28')} aria-live="off">
+          <div className={cn('font-display font-bold', compact ? 'text-[17px]' : 'text-[19px]')}>{snapped === 0 ? 'Now' : dayHour(at, tz)}</div>
           <div className="text-[13px] text-muted">
             {snapped === 0 ? dayHour(at, tz) : `+${snapped} h`} · {zoneAbbr(at, tz)}
           </div>
@@ -205,9 +220,7 @@ export function TimeSlider({ tz }: { tz: string }) {
         </div>
       </div>
       {statusText && visible && <p className="px-2 pb-0.5 text-[13px] text-muted">{statusText}</p>}
-      <div className="px-1 pt-1 md:hidden">
-        <Legend layer={layer} />
-      </div>
+
     </section>
   )
 }

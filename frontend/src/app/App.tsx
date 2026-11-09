@@ -9,10 +9,11 @@ import { useMediaQuery } from '@/lib/useMediaQuery'
 import { loadLastTrip, type SavedTrip } from '@/lib/persist'
 import { browserTz } from '@/lib/time'
 import { useUi } from '@/store/ui'
-import { BottomSheet, sheetHeightVh } from './BottomSheet'
+import { BottomSheet } from './BottomSheet'
+import { sheetHeightVh } from './sheet'
 import { HowItWorks } from './HowItWorks'
 
-function Brand() {
+function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
       <svg viewBox="0 0 32 32" className="size-8" aria-hidden="true">
@@ -21,7 +22,9 @@ function Brand() {
       </svg>
       <div className="leading-none">
         <div className="font-display text-[20px] font-bold tracking-wide">TruckRoute</div>
-        <div className="mt-0.5 text-[12px] font-medium uppercase tracking-[0.14em] text-muted">Weather-aware routing</div>
+        {!compact && (
+          <div className="mt-0.5 text-[12px] font-medium uppercase tracking-[0.14em] text-muted">Weather-aware routing</div>
+        )}
       </div>
     </div>
   )
@@ -164,7 +167,7 @@ export function App() {
           </div>
         </aside>
         <main className="relative min-w-0 flex-1">
-          <MapView padding={{ top: 60, bottom: 200, left: 60, right: 80 }} />
+          <MapView padding={{ top: 60, bottom: 200, left: 60, right: 80 }} showZoom />
           <div className="pointer-events-none absolute inset-x-4 bottom-11 flex justify-center">
             <div className="w-full max-w-[920px]">
               <TimeSlider tz={tz} />
@@ -180,19 +183,19 @@ export function App() {
     <div className="relative h-dvh overflow-hidden">
       <MapView padding={{ top: 80, bottom: Math.round((window.innerHeight * sheetVh) / 100) + 170, left: 30, right: 50 }} />
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between p-3">
-        <div className="pointer-events-auto rounded-2xl border border-line bg-panel/95 px-3 py-2 backdrop-blur">
-          <Brand />
+        <div className="pointer-events-auto rounded-2xl border border-line bg-panel/95 px-2.5 py-1.5 backdrop-blur">
+          <Brand compact />
         </div>
         <div className="pointer-events-auto rounded-2xl border border-line bg-panel/95 backdrop-blur">
           <ThemeToggle />
         </div>
       </div>
-      {sheet !== 'full' && (
+      {plan && sheet !== 'full' && (
         <div className="pointer-events-none absolute inset-x-2 z-10" style={{ bottom: `calc(${sheetVh}dvh + 8px)` }}>
-          <TimeSlider tz={tz} />
+          <TimeSlider tz={tz} compact />
         </div>
       )}
-      <BottomSheet>{panelBody}</BottomSheet>
+      <BottomSheet scrollRef={scrollRef}>{panelBody}</BottomSheet>
     </div>
   )
 }

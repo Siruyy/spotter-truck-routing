@@ -1,12 +1,12 @@
-import { type ReactNode, useRef } from 'react'
+import { type ReactNode, type RefObject, useRef } from 'react'
 import { cn } from '@/lib/cn'
 import { type SheetSnap, useUi } from '@/store/ui'
+import { SNAP_VH } from './sheet'
 
-const SNAP_VH: Record<SheetSnap, number> = { peek: 22, half: 52, full: 92 }
 const ORDER: SheetSnap[] = ['peek', 'half', 'full']
 
 /** Mobile bottom sheet with three snap points; drag the handle or tap it to cycle. */
-export function BottomSheet({ children }: { children: ReactNode }) {
+export function BottomSheet({ children, scrollRef }: { children: ReactNode; scrollRef?: RefObject<HTMLDivElement | null> }) {
   const snap = useUi((s) => s.sheet)
   const setSnap = useUi((s) => s.setSheet)
   const drag = useRef<{ y: number; startVh: number; moved: boolean } | null>(null)
@@ -59,11 +59,9 @@ export function BottomSheet({ children }: { children: ReactNode }) {
       >
         <span className="h-1.5 w-12 rounded-full bg-line-strong" />
       </button>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-8 scroll-thin">{children}</div>
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-8 scroll-thin">
+        {children}
+      </div>
     </div>
   )
-}
-
-export function sheetHeightVh(snap: SheetSnap): number {
-  return SNAP_VH[snap]
 }

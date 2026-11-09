@@ -82,7 +82,7 @@ function fitPlan(map: MapRef, routes: PlannedRoute[], padding: PaddingOptions) {
   if (w < e) map.fitBounds([w, s, e, n], { padding, duration: 900, maxZoom: 9 })
 }
 
-export function MapView({ padding }: { padding: PaddingOptions }) {
+export function MapView({ padding, showZoom = false }: { padding: PaddingOptions; showZoom?: boolean }) {
   const mapRef = useRef<MapRef>(null)
   const theme = useUi((s) => s.theme)
   const plan = useUi((s) => s.plan)
@@ -200,7 +200,7 @@ export function MapView({ padding }: { padding: PaddingOptions }) {
       dragRotate={false}
       style={{ position: 'absolute', inset: 0 }}
     >
-      <NavigationControl position="top-right" showCompass={false} />
+      {showZoom && <NavigationControl position="top-right" showCompass={false} />}
 
       {radar && (
         <Source
