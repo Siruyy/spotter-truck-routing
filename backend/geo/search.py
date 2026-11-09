@@ -66,7 +66,16 @@ async def suggest(query: str, near: tuple[float, float] | None = None) -> list[P
     data = await get_json(
         f"{BASE}/search/{quote(q, safe='')}.json", params=params, service="tomtom"
     )
-    places = [_place(r) for r in data.get("results", []) if "position" in r]
+    places: list[Place] = []
+    seen: set[tuple[str, str]] = set()
+    for r in data.get("results", []):
+        if "position" not in r:
+            continue
+        place = _place(r)
+        ident = (place.label.lower(), place.detail.lower())
+        if ident not in seen:  # TomTom often returns the same city twice
+            seen.add(ident)
+            places.append(place)
     await set_json_value(key, [p.to_dict() for p in places], SUGGEST_TTL_S)
     return places
 

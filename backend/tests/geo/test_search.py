@@ -31,6 +31,11 @@ RESULTS = {
             },
             "position": {"lat": 35.21, "lon": -101.84},
         },
+        {
+            "type": "Geography",
+            "address": {"municipality": "Amarillo", "countrySubdivisionCode": "TX"},
+            "position": {"lat": 35.2, "lon": -101.8},
+        },  # duplicate city -> dropped
         {"type": "Street", "address": {}},  # no position -> skipped
     ]
 }
