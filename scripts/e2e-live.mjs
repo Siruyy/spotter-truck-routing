@@ -3,13 +3,20 @@ import { chromium } from 'playwright'
  * Live end-to-end check + README screenshots against the deployed app.
  *   npx playwright@1.65.0 install chromium
  *   node scripts/e2e-live.mjs docs/screenshots-raw [https://truckroute.siruyy.dev]
- * Set HTTPS_PROXY if the browser needs a proxy. Exits non-zero on failure.
+ * Set HTTPS_PROXY if the browser needs a proxy. Set HEADED=1 to run on the real GPU
+ * (headless uses software GL, so its frame rate is not representative).
+ * Exits non-zero on failure.
  */
 const OUT = process.argv[2] ?? '.'
 const BASE = process.argv[3] ?? 'https://truckroute.siruyy.dev'
 const SHARE = `${BASE}/t/piC-IHMBQp`
 const proxy = process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY } : undefined
-const browser = await chromium.launch({ proxy, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
+const headed = process.env.HEADED === '1'
+const browser = await chromium.launch({
+  headless: !headed,
+  proxy,
+  args: headed ? ['--ignore-gpu-blocklist'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
+})
 const log = (...a) => console.log(...a)
 
 async function ctx(opts = {}) {
@@ -86,7 +93,7 @@ const setHour = (p, h) => p.evaluate((h) => {
   })
   // Headless runs use software GL (SwiftShader), so fps here is not representative; the
   // hard requirement checked is that scrubbing makes zero network requests.
-  log('scrub (software GL):', JSON.stringify(bench))
+  log(`scrub (${headed ? 'GPU' : 'software GL'}):`, JSON.stringify(bench))
   if (bench.appRequests > 0) { console.error('FAIL: slider made network requests'); process.exitCode = 1 }
   await c.setOffline(true)
   await p.reload({ waitUntil: 'load' }); await p.waitForTimeout(4000)

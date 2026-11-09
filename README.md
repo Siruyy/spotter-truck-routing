@@ -162,7 +162,7 @@ Results measured on 2026-11-10:
 | Check | Result |
 |---|---|
 | Plan via the UI (Kansas City → Nashville, 555 mi, 3 routes) | ~4.1–4.4 s end to end, mostly TomTom truck routing |
-| Slider sweep 0 → 48 h over 5 s, in a GPU-backed browser | **60 fps** average, p95 frame 18 ms, 0 frames over 33 ms, **0 requests** |
+| Slider sweep 0 → 48 h over 5 s, headed Chromium on the GPU (Apple M2 Pro, Metal), `HEADED=1` | **60 fps** average, p95 frame 18.1 ms, 0 frames over 33 ms, **0 requests** |
 | Offline reload | Trip, routes, cached basemap and heatmap all restored, with the offline banner shown |
 | Strong weather | Seattle → Boise at 42,000 lb: 0.71 in/hr rain in the Columbia Gorge is scored **Severe** on Route B; Route A is recommended |
 
