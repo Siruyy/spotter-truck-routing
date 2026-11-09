@@ -6,9 +6,13 @@ Pick the safest truck route for the weather, the load and the departure time.
 
 TruckRoute gets three truck routes. It samples the forecast every 10, 25 or 50 miles **for the hour the truck will actually reach that point**, and scores each point with the assessment's risk and load rules. It then recommends a route and states the reason. A 0–48 h forecast slider moves a weather heatmap and a truck marker together, so a driver can see where the truck will be and what the weather will be there at the same time.
 
-| Desktop | Checkpoint detail + truck position | Phone |
-|---|---|---|
-| ![Results](docs/screenshots/desktop-results.jpg) | ![Checkpoint](docs/screenshots/desktop-checkpoint.jpg) | ![Mobile](docs/screenshots/mobile-results.jpg) |
+| Recommendation and route options | Severe checkpoint, rain heatmap, truck at that hour |
+|---|---|
+| ![Results](docs/screenshots/desktop-results.jpg) | ![Checkpoint](docs/screenshots/desktop-checkpoint.jpg) |
+| **Light theme** | **Offline: last trip restored with the network cut** |
+| ![Light theme](docs/screenshots/desktop-light.jpg) | ![Offline](docs/screenshots/offline.jpg) |
+
+<p align="center"><img src="docs/screenshots/mobile-results.jpg" width="300" alt="Phone layout with bottom sheet"></p>
 
 ---
 
@@ -144,6 +148,23 @@ cd frontend && npm run lint && npm run typecheck && npm test && npm run build
 ```
 
 Backend tests run against recorded real responses from TomTom, Open-Meteo and NWS (`backend/tests/fixtures`). Upstream calls are mocked with `respx`, and Redis with `fakeredis`.
+
+### Verified against production
+
+`scripts/e2e-live.mjs` (Playwright) runs four checks on the live site:
+1. Plans a trip through the UI.
+2. Sweeps the slider and asserts that scrubbing makes **zero** network requests.
+3. Cuts the network and reloads, then asserts the last trip is restored.
+4. Captures the screenshots above.
+
+Results measured on 2026-11-10:
+
+| Check | Result |
+|---|---|
+| Plan via the UI (Kansas City → Nashville, 555 mi, 3 routes) | ~4.1–4.4 s end to end, mostly TomTom truck routing |
+| Slider sweep 0 → 48 h over 5 s, in a GPU-backed browser | **60 fps** average, p95 frame 18 ms, 0 frames over 33 ms, **0 requests** |
+| Offline reload | Trip, routes, cached basemap and heatmap all restored, with the offline banner shown |
+| Strong weather | Seattle → Boise at 42,000 lb: 0.71 in/hr rain in the Columbia Gorge is scored **Severe** on Route B; Route A is recommended |
 
 ---
 
