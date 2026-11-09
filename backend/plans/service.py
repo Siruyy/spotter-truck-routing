@@ -32,6 +32,7 @@ from risk.rules import Conditions, assess
 from risk.scoring import recommend
 from routing.alternatives import three_routes
 from routing.geometry import METERS_PER_MILE, LatLon, Polyline, TimeProfile, simplify
+from routing.naming import route_names
 from routing.tomtom import RawRoute
 from weather.alerts import alerts_for_routes
 from weather.models import HOUR_S, Cell, CellForecast, snap
@@ -68,14 +69,14 @@ def validate_departure(departure: datetime, now: float | None = None) -> float:
     return max(epoch, now)
 
 
-def _store_route(rid: str, raw: RawRoute) -> dict[str, Any]:
+def _store_route(rid: str, raw: RawRoute, name: str) -> dict[str, Any]:
     pts = simplify(raw.polyline.points, SAMPLING_TOLERANCE_M)
     simplified = Polyline(tuple(pts))
     scale = simplified.length_m / raw.polyline.length_m
     profile = raw.time_profile
     return {
         "id": rid,
-        "name": " & ".join(raw.road_names),
+        "name": name,
         "length_m": raw.length_m,
         "duration_s": raw.duration_s,
         "traffic_delay_s": raw.traffic_delay_s,
@@ -213,7 +214,12 @@ async def create_plan(req: PlanRequest) -> dict[str, Any]:
             "load_lb": req.load_lb,
             "interval_mi": req.interval_mi,
         },
-        "routes": [_store_route(rid, r) for rid, r in zip(ROUTE_IDS, raw_routes, strict=False)],
+        "routes": [
+            _store_route(rid, r, name)
+            for rid, r, name in zip(
+                ROUTE_IDS, raw_routes, route_names([r.roads for r in raw_routes]), strict=False
+            )
+        ],
     }
     await set_json_value(_plan_key(state["id"]), state, settings.PLAN_TTL_S)
     return await _render(state, req.interval_mi)
