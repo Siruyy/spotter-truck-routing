@@ -1,0 +1,33 @@
+# Local development stack: docker compose up --build
+services:
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_SECRET_KEY: dev-only-secret
+      DATABASE_URL: postgres://truckroute:truckroute@postgres:5432/truckroute
+      REDIS_URL: redis://redis:6379/0
+      ALLOWED_HOSTS: "*"
+      TRUST_CF_CONNECTING_IP: "false"
+      WEB_CONCURRENCY: "1"
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: truckroute
+      POSTGRES_USER: truckroute
+      POSTGRES_PASSWORD: truckroute
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U truckroute"]
+      interval: 3s
+      retries: 20
+    volumes: [pgdata:/var/lib/postgresql/data]
+volumes:
+  pgdata:
