@@ -227,7 +227,7 @@ If any route has `unknown_mi > 0`, show a "Forecast coverage incomplete" note on
 ### 6.7 Better departure time (F10)
 - For each offset in {+1, +2, +4, +6, +12} h, shift every checkpoint ETA by the offset. Route durations are reused from the original TomTom call. *Note: traffic differences across offsets are ignored, and the UI says so.*
 - Re-classify from the cached forecasts and re-rank.
-- Suggest the earliest offset whose best route has a strictly better ranking key than the current recommendation. Only the risk components count, not duration.
+- Suggest the offset whose best route has the best risk ranking key (earliest on ties), provided it is strictly better than the current recommendation. Only the risk components count, not duration.
 - Offsets are skipped if the new departure goes past now + 48 h.
 
 ### 6.8 Corridor heatmap (F8)
