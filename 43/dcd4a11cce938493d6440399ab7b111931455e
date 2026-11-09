@@ -1,0 +1,40 @@
+frontend/src/features/timeline/Legend.tsx
+  s_874b9dace0bb92::t_767f400ccdea7c 1-24,27,29,31-45
+  s_874b9dace0bb92::t_b9a2f5a30827ff 25-26,28,30
+frontend/src/features/timeline/TimeSlider.tsx
+  s_874b9dace0bb92::t_a174245cfef4a1 159
+  s_874b9dace0bb92::t_1150415e21e55f 1-158,160-213
+frontend/src/features/results/DepartureTip.tsx
+  s_874b9dace0bb92::t_27209628b50f1c 1-61
+frontend/src/features/results/AlertsPanel.tsx
+  s_874b9dace0bb92::t_37a8f31e62e9a7 1-68
+frontend/src/features/results/Verdict.tsx
+  s_874b9dace0bb92::t_1ada2605cc728e 1-63
+frontend/src/features/results/CheckpointList.tsx
+  s_874b9dace0bb92::t_3dc08d49f63a8e 1-85
+frontend/src/features/results/RouteCard.tsx
+  s_874b9dace0bb92::t_79874b7c3a3a8e 1-39,41-94
+  s_874b9dace0bb92::t_a174245cfef4a1 40
+frontend/src/features/results/TripStrip.tsx
+  s_874b9dace0bb92::t_e3a2f8845e0286 1-58
+frontend/src/features/results/CheckpointDetails.tsx
+  s_874b9dace0bb92::t_02ac877efa3a67 1-59
+frontend/src/features/results/ResultsPanel.tsx
+  s_874b9dace0bb92::t_013a6c5e2f3ac4 1-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "43dcd4a11cce938493d6440399ab7b111931455e",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
