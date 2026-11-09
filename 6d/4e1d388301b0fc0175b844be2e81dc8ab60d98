@@ -1,0 +1,28 @@
+README.md
+  s_874b9dace0bb92::t_9ac64507c3fd85 1-126,129-177
+  s_874b9dace0bb92::t_0494f2e35e1653 127-128
+docs/ARCHITECTURE.md
+  s_874b9dace0bb92::t_480d31289c6c88 1-99
+docs/WALKTHROUGH.md
+  s_874b9dace0bb92::t_c8a4786a1a9e8c 1-40
+docs/DEPLOYMENT.md
+  s_874b9dace0bb92::t_be5a05c83cf46d 1-51
+docs/superpowers/specs/2026-11-10-weather-aware-truck-routing-design.md
+  s_874b9dace0bb92::t_f64308f99e39d0 3,360-373
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6d4e1d388301b0fc0175b844be2e81dc8ab60d98",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
