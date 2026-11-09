@@ -53,7 +53,7 @@ async def test_calculate_routes_sends_truck_params(tomtom_payload: dict) -> None
     assert params["travelMode"] == "truck"
     assert params["vehicleCommercial"] == "true"
     assert params["departAt"] == "2026-11-10T14:00:00Z"
-    assert params["maxAlternatives"] == "5"
+    assert params["maxAlternatives"] == "2"
     assert params["traffic"] == "true"
 
 

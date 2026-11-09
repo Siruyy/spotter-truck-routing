@@ -100,7 +100,7 @@ async def calculate_routes(
     depart_at: datetime,
     load_lb: float,
     via: LatLon | None = None,
-    max_alternatives: int = 5,
+    max_alternatives: int = 2,
 ) -> list[RawRoute]:
     locations = [origin, *([via] if via else []), destination]
     path = ":".join(_fmt_point(p) for p in locations)
