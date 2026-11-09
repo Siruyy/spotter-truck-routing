@@ -1,0 +1,252 @@
+@import 'tailwindcss';
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow/700.css';
+@import '@fontsource/barlow-semi-condensed/600.css';
+@import '@fontsource/barlow-semi-condensed/700.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/*
+ * Design tokens. Barlow is drawn from US highway signage, which suits a tool
+ * for drivers; numbers use tabular figures so columns of miles and times align.
+ */
+@theme {
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Barlow Semi Condensed', 'Barlow', ui-sans-serif, sans-serif;
+
+  --color-canvas: var(--tr-bg);
+  --color-panel: var(--tr-panel);
+  --color-raised: var(--tr-raised);
+  --color-sunken: var(--tr-sunken);
+  --color-line: var(--tr-line);
+  --color-line-strong: var(--tr-line-strong);
+  --color-fg: var(--tr-fg);
+  --color-muted: var(--tr-muted);
+  --color-faint: var(--tr-faint);
+  --color-signal: var(--tr-signal);
+  --color-signal-ink: var(--tr-signal-ink);
+  --color-low: #5b9bd5;
+  --color-mod: #e9c46a;
+  --color-high: #f4892c;
+  --color-sev: #e0412f;
+  --color-stop: #a855c7;
+}
+
+:root,
+[data-theme='dark'] {
+  --tr-bg: #0b0d0f;
+  --tr-panel: #111417;
+  --tr-raised: #181c20;
+  --tr-sunken: #0d1012;
+  --tr-line: #23292f;
+  --tr-line-strong: #343c44;
+  --tr-fg: #ece9e2;
+  --tr-muted: #a2a7ad;
+  --tr-faint: #6d747c;
+  /* Interstate-sign amber for primary actions and the recommendation. */
+  --tr-signal: #f5b83d;
+  --tr-signal-ink: #1a1203;
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --tr-bg: #eef0f1;
+  --tr-panel: #fbfbfa;
+  --tr-raised: #ffffff;
+  --tr-sunken: #f1f2f3;
+  --tr-line: #dcdfe2;
+  --tr-line-strong: #c3c8cd;
+  --tr-fg: #14181c;
+  --tr-muted: #545b63;
+  --tr-faint: #7e868e;
+  --tr-signal: #d9940b;
+  --tr-signal-ink: #1a1203;
+  color-scheme: light;
+}
+
+@layer base {
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--tr-bg);
+  color: var(--tr-fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'tnum' 1;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--tr-signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tr-line-strong) transparent;
+}
+}
+
+/* ---- Map chrome -------------------------------------------------------- */
+.maplibregl-ctrl-group {
+  background: var(--tr-panel) !important;
+  border: 1px solid var(--tr-line) !important;
+  box-shadow: none !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+.maplibregl-ctrl-group button {
+  width: 40px !important;
+  height: 40px !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--tr-line) !important;
+}
+[data-theme='dark'] .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+.maplibregl-ctrl-attrib {
+  background: color-mix(in oklab, var(--tr-panel) 80%, transparent) !important;
+  color: var(--tr-muted) !important;
+  font-size: 11px;
+}
+.maplibregl-ctrl-attrib a {
+  color: var(--tr-muted) !important;
+}
+[data-theme='dark'] .maplibregl-ctrl-attrib-button {
+  filter: invert(1);
+}
+
+.cp-popup .maplibregl-popup-content {
+  background: var(--tr-panel);
+  color: var(--tr-fg);
+  border: 1px solid var(--tr-line-strong);
+  border-radius: 12px;
+  padding: 14px 16px 12px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  font-family: var(--font-sans);
+}
+.cp-popup .maplibregl-popup-tip {
+  border-top-color: var(--tr-line-strong) !important;
+}
+.cp-popup .maplibregl-popup-close-button {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  color: var(--tr-muted);
+  border-radius: 8px;
+}
+
+.route-pin {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  background: var(--tr-panel);
+  color: var(--tr-fg);
+  border: 2px solid var(--tr-line-strong);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+  cursor: pointer;
+}
+.route-pin--active {
+  background: var(--tr-signal);
+  color: var(--tr-signal-ink);
+  border-color: var(--tr-signal-ink);
+}
+
+.endpoint {
+  display: block;
+}
+.endpoint--origin {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--tr-fg);
+  border: 4px solid var(--tr-bg);
+  box-shadow: 0 0 0 2px var(--tr-fg);
+}
+.endpoint--dest {
+  width: 18px;
+  height: 24px;
+  background: var(--tr-fg);
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 50% 100%, 0 62%);
+}
+
+.truck-marker {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--tr-signal);
+  color: var(--tr-signal-ink);
+  border: 3px solid var(--tr-bg);
+  box-shadow: 0 0 0 2px var(--tr-signal), 0 4px 12px rgb(0 0 0 / 0.4);
+  pointer-events: none;
+}
+
+/* ---- Time slider ------------------------------------------------------- */
+.hour-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  cursor: pointer;
+}
+.hour-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--tr-line-strong);
+}
+.hour-range::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--tr-line-strong);
+}
+.hour-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -11px;
+  border-radius: 50%;
+  background: var(--tr-signal);
+  border: 4px solid var(--tr-panel);
+  box-shadow: 0 0 0 1px var(--tr-signal), 0 2px 8px rgb(0 0 0 / 0.4);
+}
+.hour-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--tr-signal);
+  border: 4px solid var(--tr-panel);
+}
