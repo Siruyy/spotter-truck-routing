@@ -1,0 +1,19 @@
+frontend/src/features/plan-form/PlanForm.tsx
+  s_874b9dace0bb92::t_a5acedf935390e 2,15-34,48,149-150
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bfa52ce586178e46402d14cfcaa657cc9465533d",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
