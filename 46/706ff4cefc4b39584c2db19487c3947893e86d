@@ -1,0 +1,21 @@
+backend/config/settings.py
+  s_874b9dace0bb92::t_7e907b89f1535b 90
+backend/weather/service.py
+  s_874b9dace0bb92::t_7e907b89f1535b 17,61-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "46706ff4cefc4b39584c2db19487c3947893e86d",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
