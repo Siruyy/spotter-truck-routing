@@ -1,0 +1,28 @@
+frontend/Dockerfile
+  s_874b9dace0bb92::t_bedc76385ccc06 1-14
+frontend/nginx.conf
+  s_874b9dace0bb92::t_c93c2a7cb9abde 1-18,21-53,57-58,60,62-65,67-70,72-74
+  s_874b9dace0bb92::t_2ca0a791c577a9 19-20,54-56,59,61,66,71
+frontend/.dockerignore
+  s_874b9dace0bb92::t_62488f10d050bc 1-5
+frontend/src/features/map/MapView.tsx
+  s_874b9dace0bb92::t_481fc844eca561 189,192-193
+frontend/src/features/results/AlertsPanel.tsx
+  s_874b9dace0bb92::t_481fc844eca561 1,23-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "39397f798a6b45588b07fadb8a490d8e005bbdcc",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
