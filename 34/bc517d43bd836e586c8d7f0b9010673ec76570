@@ -1,0 +1,23 @@
+scripts/e2e-live.mjs
+  s_874b9dace0bb92::t_71c2b79224500f 6-8,14-19,96
+README.md
+  s_874b9dace0bb92::t_03c4aba62d4399 165
+docs/WALKTHROUGH.md
+  s_874b9dace0bb92::t_ae8b236a929b7a 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "34bc517d43bd836e586c8d7f0b9010673ec76570",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
