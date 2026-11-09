@@ -1,0 +1,28 @@
+docs/superpowers/specs/2026-11-10-weather-aware-truck-routing-design.md
+  s_874b9dace0bb92::t_b31a19927cf879 234-235
+  s_874b9dace0bb92::t_4f3bb6b4abfb5e 274-275
+  s_874b9dace0bb92::t_286d6a7898b0d6 321-324
+  s_874b9dace0bb92::t_3bb90bf196d7d9 178-180
+  s_874b9dace0bb92::t_e7e96e0b9ee0e4 69-71
+  s_874b9dace0bb92::t_1d89c8e22b2a75 356-359
+  s_874b9dace0bb92::t_f3f00af08dec0f 97-100
+  s_874b9dace0bb92::t_cb7c7b12bd3349 1-68,72-96,101-177,181-233,236-273,276-320,325-355
+.gitignore
+  s_874b9dace0bb92::t_5784671a33f853 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "be0b0070da406f7981fec27ce96c80bf15afa84c",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
