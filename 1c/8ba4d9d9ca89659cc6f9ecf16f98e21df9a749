@@ -1,0 +1,43 @@
+frontend/src/lib/geo.ts
+  s_874b9dace0bb92::t_fbbcf3ac905f2d 1-107
+frontend/src/store/ui.ts
+  s_874b9dace0bb92::t_1954db51ef7b1f 1-28,32-42,44-45,50-73,76-101,103-107
+  s_874b9dace0bb92::t_d5d5d1b3dbe46e 29-31,43,46-49,74-75,102
+frontend/src/api/types.ts
+  s_874b9dace0bb92::t_fd39ead9cc9747 1-135
+frontend/src/lib/useMediaQuery.ts
+  s_874b9dace0bb92::t_b83bc8e9e95519 1-13
+frontend/src/lib/time.ts
+  s_874b9dace0bb92::t_a40832851434a3 1-95
+frontend/src/api/client.ts
+  s_874b9dace0bb92::t_396a23c9751f6d 1-12,17,20-71
+  s_874b9dace0bb92::t_325c31605cf9a2 13-16,18-19
+frontend/src/lib/format.ts
+  s_874b9dace0bb92::t_a89e2d7cd177ce 1-63
+frontend/src/lib/cn.ts
+  s_874b9dace0bb92::t_1cb6dcd7d8b310 1-5
+frontend/src/lib/persist.ts
+  s_874b9dace0bb92::t_f0e1c3d3ef3ec4 1-48
+frontend/src/api/hooks.ts
+  s_874b9dace0bb92::t_3896c98c4e07d7 4,17,45
+  s_874b9dace0bb92::t_15712f9ea7818a 2-3,5-16,18-21,23-44,46-50,52-63
+  s_874b9dace0bb92::t_325c31605cf9a2 1,22,51
+frontend/src/lib/risk.ts
+  s_874b9dace0bb92::t_6024b31ea0cba3 1-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c8ba4d9d9ca89659cc6f9ecf16f98e21df9a749",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
