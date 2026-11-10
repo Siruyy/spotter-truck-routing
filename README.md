@@ -205,3 +205,7 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 - **Better departure time** doesn't re-query traffic.
 - **NWS fallback** rain and snow are 6-hour averages, and the UI labels them that way.
 - **Offline mode** caches only the basemap tiles you have already viewed (capped at 1,500, per OpenFreeMap's terms), so unvisited zoom levels stay blank offline.
+
+## License
+
+[MIT](LICENSE). Third-party data keeps its own terms: Open-Meteo (CC BY 4.0), NWS and IEM (public domain), OpenStreetMap / OpenFreeMap (ODbL), and TomTom (their developer terms).
