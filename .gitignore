@@ -11,3 +11,6 @@ htmlcov/
 .DS_Store
 db.sqlite3
 demo/
+
+# Personal recording script (kept local, not in the repo)
+docs/WALKTHROUGH.md
