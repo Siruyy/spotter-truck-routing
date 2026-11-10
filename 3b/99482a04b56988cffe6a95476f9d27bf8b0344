@@ -1,0 +1,19 @@
+docs/WALKTHROUGH.md
+  s_874b9dace0bb92::t_df2a67a23ec427 1,3,5,7-14,16,18,20-23,25,27-34,36,38-44,46,48-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b99482a04b56988cffe6a95476f9d27bf8b0344",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
