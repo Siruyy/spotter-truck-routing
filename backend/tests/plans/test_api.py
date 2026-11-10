@@ -20,6 +20,7 @@ def _om(request: httpx.Request) -> httpx.Response:
     hourly = {
         "time": times,
         "wind_speed_10m": [38.0] * hours,  # High; Severe for loads > 40k
+        "wind_direction_10m": [225.0] * hours,
         "wind_gusts_10m": [50.0] * hours,
         "rain": [0.0] * hours,
         "showers": [0.0] * hours,
@@ -102,6 +103,7 @@ async def test_full_plan_flow(upstream) -> None:
     assert 0 < n <= 300 and heat["hours"] == 49
     assert len(heat["layers"]["risk"]) == n * 49
     assert set(heat["layers"]["risk"]) <= {3, -1}
+    assert len(heat["layers"]["wind_dir"]) == n * 49
 
     alerts = (await client.get(f"/api/plans/{plan['id']}/alerts")).json()
     assert alerts["alerts"][0]["event"] == "High Wind Warning"
@@ -187,5 +189,6 @@ async def test_point_conditions_scores_with_load(upstream) -> None:
     assert {h["level"] for h in light["hours"]} == {2}  # 38 mph -> High
     assert {h["level"] for h in heavy["hours"]} == {3}  # 42k lb escalates to Severe
     assert heavy["hours"][0]["wind_mph"] == 38.0
+    assert heavy["hours"][0]["wind_dir_deg"] == 225.0
     bad = await client.get("/api/weather/point?lat=10&lon=-100")
     assert bad.status_code == 422

@@ -26,6 +26,7 @@ class HourValues:
     temp_f: float | None
     visibility_mi: float | None
     weather_code: int | None
+    wind_dir_deg: float | None = None  # meteorological: direction the wind blows FROM
 
     @property
     def complete(self) -> bool:
@@ -55,6 +56,7 @@ class CellForecast:
     weather_code: tuple[int | None, ...]
     utc_offset_s: int = 0
     timezone: str = "UTC"
+    wind_dir_deg: tuple[float | None, ...] = ()
 
     @property
     def end(self) -> int:
@@ -76,6 +78,7 @@ class CellForecast:
             temp_f=self.temp_f[k],
             visibility_mi=self.visibility_mi[k],
             weather_code=self.weather_code[k],
+            wind_dir_deg=self.wind_dir_deg[k] if k < len(self.wind_dir_deg) else None,
         )
 
     def at(self, epoch_s: float) -> HourValues | None:

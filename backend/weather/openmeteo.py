@@ -15,7 +15,8 @@ URL = "https://api.open-meteo.com/v1/forecast"
 BATCH_SIZE = 150  # keeps the GET URL well under nginx's limit
 MAX_FORECAST_HOURS = 384
 HOURLY = (
-    "wind_speed_10m,wind_gusts_10m,rain,showers,snowfall,temperature_2m,visibility,weather_code"
+    "wind_speed_10m,wind_direction_10m,wind_gusts_10m,rain,showers,snowfall,temperature_2m,"
+    "visibility,weather_code"
 )
 FEET_PER_MILE = 5280.0
 
@@ -42,6 +43,7 @@ def parse_location(item: dict[str, Any], fetched_at: int) -> CellForecast:
         weather_code=tuple(h["weather_code"]),
         utc_offset_s=int(item.get("utc_offset_seconds", 0)),
         timezone=str(item.get("timezone", "UTC")),
+        wind_dir_deg=tuple(h.get("wind_direction_10m") or [None] * len(h["time"])),
     )
 
 

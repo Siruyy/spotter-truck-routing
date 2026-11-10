@@ -59,6 +59,7 @@ def test_parse_openmeteo_fixture() -> None:
     assert fc.wind_mph[0] == 2.1
     assert fc.visibility_mi[0] == pytest.approx(71850.392 / 5280)
     assert fc.rain_in_hr[0] == 0.0
+    assert fc.at_index(0).wind_dir_deg is None  # fixture predates direction: degrades to None
 
 
 def test_openmeteo_rain_adds_showers() -> None:
@@ -170,3 +171,31 @@ async def test_budget_exhausted_without_fallback_raises(settings) -> None:
 def test_horizon_hours_minimum() -> None:
     assert horizon_hours(until=100, now=0) == 72
     assert horizon_hours(until=100 * 3600, now=0) == 102
+
+
+def test_wind_direction_parsed_and_old_cache_compatible() -> None:
+    item = {
+        "hourly": {
+            "time": [1],
+            "wind_speed_10m": [10],
+            "wind_direction_10m": [270],
+            "wind_gusts_10m": [15],
+            "rain": [0],
+            "showers": [0],
+            "snowfall": [0],
+            "temperature_2m": [40],
+            "visibility": [None],
+            "weather_code": [1],
+        }
+    }
+    fc = openmeteo.parse_location(item, 0)
+    assert fc.at_index(0).wind_dir_deg == 270
+    old = fc.to_dict()
+    del old["wind_dir_deg"]
+    assert CellForecast.from_dict(old).at_index(0).wind_dir_deg is None
+
+
+def test_nws_wind_direction() -> None:
+    props = load_fixture("nws_grid.json")["properties"]
+    fc = nws.parse_grid(props, "America/Denver", 1)
+    assert any(d is not None for d in fc.wind_dir_deg)

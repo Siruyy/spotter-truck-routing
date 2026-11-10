@@ -251,6 +251,7 @@ def heatmap_payload(
     wind: list[float] = [-1] * (n * HEATMAP_HOURS)
     rain: list[float] = [-1] * (n * HEATMAP_HOURS)
     snow: list[float] = [-1] * (n * HEATMAP_HOURS)
+    wind_dir: list[float] = [-1] * (n * HEATMAP_HOURS)
     for p, point in enumerate(grid.points):
         fc = forecasts.get(snap(*point))
         if fc is None:
@@ -264,6 +265,7 @@ def heatmap_payload(
             wind[idx] = _round_or(v.wind_mph, 1)
             rain[idx] = _round_or(v.rain_in_hr, 3)
             snow[idx] = _round_or(v.snow_in_hr, 3)
+            wind_dir[idx] = _round_or(v.wind_dir_deg, 0)
             if v.complete:
                 risk[idx] = int(
                     assess(
@@ -277,7 +279,7 @@ def heatmap_payload(
         "spacing": grid.spacing,
         "bbox": list(grid.bbox),
         "points": [[p[0], p[1]] for p in grid.points],
-        "layers": {"risk": risk, "wind": wind, "rain": rain, "snow": snow},
+        "layers": {"risk": risk, "wind": wind, "rain": rain, "snow": snow, "wind_dir": wind_dir},
         "load_applied": load_lb is not None,
     }
 

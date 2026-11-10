@@ -38,7 +38,7 @@ class ForecastSet:
 
 
 def _key(cell: Cell) -> str:
-    return f"fc:{cell[0]}:{cell[1]}"
+    return f"fc2:{cell[0]}:{cell[1]}"  # v2 adds wind direction
 
 
 def _is_fresh(fc: CellForecast, until: float, now: float) -> bool:

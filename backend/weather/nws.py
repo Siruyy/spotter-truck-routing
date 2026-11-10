@@ -61,6 +61,7 @@ def parse_grid(props: dict[str, Any], timezone: str, fetched_at: int) -> CellFor
     snow = expand(props.get("snowfallAmount", {}), spread=True)
     temp = expand(props.get("temperature", {}), spread=False)
     vis = expand(props.get("visibility", {}), spread=False)
+    wdir = expand(props.get("windDirection", {}), spread=False)
     times = sorted(t for t in wind if t in qpf)
 
     def conv(series: dict[int, float], factor: float) -> tuple[float | None, ...]:
@@ -79,6 +80,7 @@ def parse_grid(props: dict[str, Any], timezone: str, fetched_at: int) -> CellFor
         visibility_mi=conv(vis, M_TO_MI),
         weather_code=tuple(None for _ in times),
         timezone=timezone,
+        wind_dir_deg=conv(wdir, 1.0),
     )
 
 
