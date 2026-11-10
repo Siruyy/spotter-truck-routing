@@ -1,0 +1,19 @@
+scripts/e2e-live.mjs
+  s_874b9dace0bb92::t_be0fe95a747e6b 91-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cf42d33080f99d9901d1fb059d0760c247dd577b",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
