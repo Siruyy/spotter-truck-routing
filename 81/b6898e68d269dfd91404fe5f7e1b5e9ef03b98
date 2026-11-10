@@ -1,0 +1,25 @@
+backend/plans/service.py
+  s_874b9dace0bb92::t_ff2f8999106373 29,249-250,256,282-283,292-294,304-305,307-312
+backend/tests/plans/test_grid.py
+  s_874b9dace0bb92::t_ff2f8999106373 3-4,8-9,12-35,37,42
+backend/tests/plans/test_api.py
+  s_874b9dace0bb92::t_ff2f8999106373 103-104
+backend/plans/grid.py
+  s_874b9dace0bb92::t_ff2f8999106373 1,9,12-13,21-24,43,45-47,49-61,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "81b6898e68d269dfd91404fe5f7e1b5e9ef03b98",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
