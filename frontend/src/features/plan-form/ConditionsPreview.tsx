@@ -13,6 +13,7 @@ import {
 import { useConditions } from '@/api/hooks'
 import type { Place, PointHour } from '@/api/types'
 import { RiskChip } from '@/components/ui/RiskChip'
+import { WindDirection } from '@/components/ui/WindArrow'
 import { mph, rate, sky, temp } from '@/lib/format'
 import { levelMeta } from '@/lib/risk'
 import { cn } from '@/lib/cn'
@@ -80,6 +81,7 @@ function PlaceConditions({ place, load, marker }: { place: Place; load: number; 
             <span>{sky(now.weather_code) || 'Now'}</span>
             <span aria-hidden="true">·</span>
             <span>Wind {mph(now.wind_mph)}</span>
+            <WindDirection deg={now.wind_dir_deg} />
             {(now.rain_in_hr ?? 0) > 0 && (
               <>
                 <span aria-hidden="true">·</span>

@@ -21,6 +21,8 @@ export interface HourWeather {
   temp_f: number | null
   visibility_mi: number | null
   weather_code: number | null
+  /** Direction the wind blows FROM, degrees (meteorological). */
+  wind_dir_deg?: number | null
 }
 
 export interface Checkpoint {
@@ -100,7 +102,7 @@ export interface Heatmap {
   spacing: number
   bbox: [number, number, number, number]
   points: [number, number][] // [lat, lon]
-  layers: Record<HeatLayer, number[]> // hour-major: index = h * points + p; -1 = missing
+  layers: Record<HeatLayer, number[]> & { wind_dir?: number[] } // hour-major: h * points + p; -1 = missing
   load_applied: boolean
   provider: string
   stale_as_of: number | null

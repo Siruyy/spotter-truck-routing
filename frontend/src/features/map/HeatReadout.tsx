@@ -1,5 +1,6 @@
-import type { Heatmap } from '@/api/types'
+import type { Heatmap, HeatLayer } from '@/api/types'
 import { RiskChip } from '@/components/ui/RiskChip'
+import { WindDirection } from '@/components/ui/WindArrow'
 import { mph, rate } from '@/lib/format'
 import { haversineMi } from '@/lib/geo'
 import { dayHour } from '@/lib/time'
@@ -39,7 +40,7 @@ export function HeatReadout({ heat, pos, tz }: { heat: Heatmap | null; pos: Read
   if (p < 0) return null
   const n = heat.points.length
   const h = Math.min(heat.hours - 1, Math.round(hourF))
-  const at = (key: keyof Heatmap['layers']) => {
+  const at = (key: HeatLayer) => {
     const v = heat.layers[key][h * n + p] as number
     return v < 0 ? null : v
   }
@@ -47,6 +48,8 @@ export function HeatReadout({ heat, pos, tz }: { heat: Heatmap | null; pos: Read
   const wind = at('wind')
   const rain = at('rain')
   const snow = at('snow')
+  const dirs = heat.layers.wind_dir
+  const windDir = dirs && (dirs[h * n + p] as number) >= 0 ? (dirs[h * n + p] as number) : null
   const [plat, plon] = heat.points[p] as [number, number]
   const gridMi = Math.round(haversineMi([plon, plat], [plon + heat.spacing, plat]))
   const row = (key: string, label: string, value: string) => (
@@ -68,6 +71,11 @@ export function HeatReadout({ heat, pos, tz }: { heat: Heatmap | null; pos: Read
         <RiskChip level={risk as 0 | 1 | 2 | 3 | 4 | null} size="sm" />
       </div>
       {row('wind', 'Wind', mph(wind))}
+      {windDir !== null && (
+        <div className={`-mt-0.5 mb-0.5 flex justify-end ${layer === 'wind' ? 'text-fg' : 'text-muted'}`}>
+          <WindDirection deg={windDir} />
+        </div>
+      )}
       {row('rain', 'Rain', rate(rain))}
       {row('snow', 'Snow', rate(snow))}
       <div className="mt-2 border-t border-line pt-1.5 text-[11px] leading-snug text-faint">

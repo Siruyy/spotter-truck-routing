@@ -1,6 +1,7 @@
 import { CloudRain, Eye, Snowflake, Thermometer, Wind } from 'lucide-react'
 import type { Checkpoint } from '@/api/types'
 import { RiskChip } from '@/components/ui/RiskChip'
+import { WindDirection } from '@/components/ui/WindArrow'
 import { mph, rate, sky, temp, visibility } from '@/lib/format'
 import { FACTOR_LABEL } from '@/lib/risk'
 import { clock, dayLabel } from '@/lib/time'
@@ -45,6 +46,9 @@ export function CheckpointDetails({ checkpoint: cp, routeId }: Props) {
             <dd className={r.key === cp.factor && (cp.level ?? 0) > 0 ? 'font-semibold' : ''}>
               {r.value}
               {r.sub && <span className="text-muted"> · {r.sub}</span>}
+              {r.key === 'wind' && w?.wind_dir_deg != null && (
+                <WindDirection deg={w.wind_dir_deg} className="ml-1.5 inline-flex items-center gap-1 text-muted" />
+              )}
             </dd>
           </div>
         ))}
