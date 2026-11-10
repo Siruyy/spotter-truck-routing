@@ -133,3 +133,17 @@ export interface SharedPlan {
 export interface ApiErrorBody {
   error: { code: string; message: string }
 }
+
+export interface PointHour extends HourWeather {
+  t: number
+  level: RiskLevel | null
+  factor: Factor | null
+}
+
+export interface PointConditions {
+  tz: string
+  provider: string
+  stale_as_of: number | null
+  load_applied: boolean
+  hours: PointHour[]
+}

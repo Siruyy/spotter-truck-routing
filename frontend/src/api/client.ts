@@ -6,6 +6,7 @@ import type {
   Place,
   Plan,
   PlanInput,
+  PointConditions,
   SharedPlan,
 } from './types'
 
@@ -67,5 +68,10 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ interval_mi: interval }),
     }),
+  conditions: (lat: number, lon: number, loadLb: number, signal?: AbortSignal) =>
+    request<PointConditions>(
+      `/weather/point?lat=${lat.toFixed(3)}&lon=${lon.toFixed(3)}&hours=12&load_lb=${Math.round(loadLb)}`,
+      { signal },
+    ),
   shared: (slug: string) => request<SharedPlan>(`/shared/${encodeURIComponent(slug)}`),
 }

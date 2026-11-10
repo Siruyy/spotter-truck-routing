@@ -1,7 +1,7 @@
 import { keepPreviousData as keepPrevious, useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { api } from './client'
-import type { Heatmap, Place } from './types'
+import type { Heatmap, Place, PointConditions } from './types'
 
 export function useDebounced<T>(value: T, ms: number): T {
   const [v, setV] = useState(value)
@@ -58,6 +58,19 @@ export function useAlerts(planId: string | null) {
     queryFn: () => api.alerts(planId as string),
     enabled: !!planId,
     staleTime: 3 * 60_000,
+    retry: 1,
+  })
+}
+
+/** Next 12 h at a place, scored with the (debounced, rounded) load weight. */
+export function useConditions(place: Place | null, loadLb: number) {
+  const load = useDebounced(Math.round(loadLb / 1000) * 1000, 400)
+  return useQuery<PointConditions>({
+    queryKey: ['conditions', place?.lat.toFixed(2), place?.lon.toFixed(2), load],
+    queryFn: ({ signal }) => api.conditions((place as Place).lat, (place as Place).lon, load, signal),
+    enabled: !!place,
+    staleTime: 15 * 60_000,
+    placeholderData: keepPrevious,
     retry: 1,
   })
 }
