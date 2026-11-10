@@ -1,0 +1,26 @@
+frontend/src/features/map/heatmap/useHeatmapFrames.ts
+  s_874b9dace0bb92::t_c18b71b8b5f703 63
+frontend/src/features/map/heatmap/bake.ts
+  s_874b9dace0bb92::t_c18b71b8b5f703 21-22,120-126,138-152,190-211,215-217,241-244
+  s_874b9dace0bb92::t_fa2eba89152222 245-248
+frontend/src/api/types.ts
+  s_874b9dace0bb92::t_c18b71b8b5f703 105-106
+frontend/src/features/map/heatmap/bake.test.ts
+  s_874b9dace0bb92::t_1c2d7e35bf45dc 46-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f220a03591612488781d31b934004abc18ccf31d",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
