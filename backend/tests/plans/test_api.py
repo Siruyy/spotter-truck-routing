@@ -100,7 +100,8 @@ async def test_full_plan_flow(upstream) -> None:
 
     heat = (await client.get(f"/api/plans/{plan['id']}/heatmap")).json()
     n = len(heat["points"])
-    assert 0 < n <= 300 and heat["hours"] == 49
+    assert heat["fine_from"] <= 300 and n > heat["fine_from"]  # lattice + exact route cells
+    assert heat["hours"] == 49
     assert len(heat["layers"]["risk"]) == n * 49
     assert set(heat["layers"]["risk"]) <= {3, -1}
     assert len(heat["layers"]["wind_dir"]) == n * 49

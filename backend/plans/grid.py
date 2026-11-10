@@ -1,4 +1,4 @@
-"""Lattice grids for the weather heatmap: corridor around routes or a viewport bbox."""
+"""Lattice grids for the weather heatmap: the area around a trip, or a viewport bbox."""
 
 from __future__ import annotations
 
@@ -6,12 +6,11 @@ import math
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
-from routing.geometry import METERS_PER_MILE, LatLon, haversine_m
+from routing.geometry import LatLon
 
 MAX_POINTS = 300
-CORRIDOR_RADIUS_MI = 60
-BBOX_PAD_DEG = 0.5
-SPACINGS_DEG = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0)
+AREA_PAD_DEG = 1.0
+SPACINGS_DEG = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0)
 MAX_VIEWPORT_SPAN_DEG = 40.0
 
 
@@ -19,7 +18,10 @@ MAX_VIEWPORT_SPAN_DEG = 40.0
 class Grid:
     spacing: float
     bbox: tuple[float, float, float, float]  # west, south, east, north
-    points: tuple[LatLon, ...]
+    points: tuple[LatLon, ...]  # regular lattice at `spacing`
+    # Exact forecast cells along the routes (the checkpoints' own cells), drawn
+    # on top of the lattice so the map agrees with the checkpoints near the road.
+    fine: tuple[LatLon, ...] = ()
 
 
 def _lattice(bbox: tuple[float, float, float, float], spacing: float) -> list[LatLon]:
@@ -38,35 +40,25 @@ def _bbox_of(points: Iterable[LatLon], pad: float) -> tuple[float, float, float,
     return (min(lons) - pad, min(lats) - pad, max(lons) + pad, max(lats) + pad)
 
 
-def corridor_grid(samples: Sequence[LatLon], max_points: int = MAX_POINTS) -> Grid:
-    """Lattice points within CORRIDOR_RADIUS_MI of any route sample point."""
-    if not samples:
-        raise ValueError("corridor needs route samples")
-    bbox = _bbox_of(samples, BBOX_PAD_DEG)
-    radius_m = CORRIDOR_RADIUS_MI * METERS_PER_MILE
-    buckets: dict[tuple[int, int], list[LatLon]] = {}
-    for s in samples:
-        buckets.setdefault((math.floor(s[0]), math.floor(s[1])), []).append(s)
-
-    def near(p: LatLon) -> bool:
-        ci, cj = math.floor(p[0]), math.floor(p[1])
-        for di in (-1, 0, 1):
-            for dj in (-2, -1, 0, 1, 2):
-                for s in buckets.get((ci + di, cj + dj), ()):
-                    if haversine_m(p, s) <= radius_m:
-                        return True
-        return False
-
+def _coarsest_fit(bbox: tuple[float, float, float, float], max_points: int) -> Grid:
     for spacing in SPACINGS_DEG:
-        candidates = _lattice(bbox, spacing)
-        # Cheap pre-check: skip spacings whose bbox lattice is hopelessly dense.
-        if len(candidates) > max_points * 40:
-            continue
-        kept = [p for p in candidates if near(p)]
-        if len(kept) <= max_points:
-            return Grid(spacing, bbox, tuple(kept))
+        points = _lattice(bbox, spacing)
+        if len(points) <= max_points:
+            return Grid(spacing, bbox, tuple(points))
     spacing = SPACINGS_DEG[-1]
-    return Grid(spacing, bbox, tuple(p for p in _lattice(bbox, spacing) if near(p))[:max_points])
+    return Grid(spacing, bbox, tuple(_lattice(bbox, spacing)[:max_points]))
+
+
+def area_grid(
+    samples: Sequence[LatLon], fine: Sequence[LatLon] = (), max_points: int = MAX_POINTS
+) -> Grid:
+    """Whole padded area around the routes (no gaps between them), plus exact route cells."""
+    if not samples:
+        raise ValueError("area grid needs route samples")
+    grid = _coarsest_fit(_bbox_of(samples, AREA_PAD_DEG), max_points)
+    coarse = set(grid.points)
+    extra = tuple(dict.fromkeys(c for c in fine if c not in coarse))
+    return Grid(grid.spacing, grid.bbox, grid.points, extra)
 
 
 def viewport_grid(bbox: tuple[float, float, float, float], max_points: int = MAX_POINTS) -> Grid:
@@ -75,9 +67,4 @@ def viewport_grid(bbox: tuple[float, float, float, float], max_points: int = MAX
         raise ValueError("invalid bbox")
     if east - west > MAX_VIEWPORT_SPAN_DEG or north - south > MAX_VIEWPORT_SPAN_DEG:
         raise ValueError("bbox too large; zoom in")
-    for spacing in SPACINGS_DEG:
-        points = _lattice(bbox, spacing)
-        if len(points) <= max_points:
-            return Grid(spacing, bbox, tuple(points))
-    spacing = SPACINGS_DEG[-1]
-    return Grid(spacing, bbox, tuple(_lattice(bbox, spacing)[:max_points]))
+    return _coarsest_fit(bbox, max_points)

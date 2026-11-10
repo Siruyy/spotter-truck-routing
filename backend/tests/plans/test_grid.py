@@ -1,33 +1,45 @@
 import pytest
 
-from plans.grid import MAX_POINTS, corridor_grid, viewport_grid
-from routing.geometry import METERS_PER_MILE, Polyline, haversine_m
+from plans.grid import MAX_POINTS, area_grid, viewport_grid
+from routing.geometry import Polyline
 from weather.models import snap
 
 
-def test_corridor_grid_caps_points_and_stays_near_route() -> None:
-    route = Polyline(((32.78, -96.8), (35.2, -101.8), (39.74, -104.99)))
-    samples = route.densified(15_000)
-    grid = corridor_grid(samples)
+def _samples():
+    return Polyline(((32.78, -96.8), (35.2, -101.8), (39.74, -104.99))).densified(15_000)
+
+
+def test_area_grid_covers_whole_padded_area_without_gaps() -> None:
+    samples = _samples()
+    grid = area_grid(samples)
     assert 0 < len(grid.points) <= MAX_POINTS
-    for p in grid.points:
-        assert snap(*p) == p  # on the shared forecast lattice
-        assert min(haversine_m(p, s) for s in samples) <= 60 * METERS_PER_MILE + 1
+    w, s, e, n = grid.bbox
+    assert w < -104.99 - 0.9 and e > -96.8 + 0.9 and s < 32.78 - 0.9 and n > 39.74 + 0.9
+    # A regular lattice: every row has the same number of points (no corridor holes).
+    rows: dict[float, int] = {}
+    for lat, _ in grid.points:
+        rows[lat] = rows.get(lat, 0) + 1
+    assert len(set(rows.values())) == 1
+    assert all(snap(*p) == p for p in grid.points)
 
 
-def test_corridor_grid_short_route_uses_fine_spacing() -> None:
-    grid = corridor_grid(Polyline(((40.0, -100.0), (40.0, -99.9))).densified(5_000))
-    assert grid.spacing >= 0.1 and len(grid.points) <= MAX_POINTS
+def test_area_grid_adds_route_cells_without_duplicates() -> None:
+    samples = _samples()
+    coarse = area_grid(samples)
+    on_lattice = coarse.points[0]
+    fine = [(33.1, -97.2), (33.1, -97.2), on_lattice]
+    grid = area_grid(samples, fine)
+    assert grid.fine == ((33.1, -97.2),)
 
 
-def test_corridor_requires_samples() -> None:
+def test_area_grid_requires_samples() -> None:
     with pytest.raises(ValueError):
-        corridor_grid([])
+        area_grid([])
 
 
 def test_viewport_grid_validation_and_cap() -> None:
     grid = viewport_grid((-105.0, 35.0, -95.0, 42.0))
-    assert len(grid.points) <= MAX_POINTS
+    assert len(grid.points) <= MAX_POINTS and grid.fine == ()
     with pytest.raises(ValueError):
         viewport_grid((-95.0, 35.0, -105.0, 42.0))
     with pytest.raises(ValueError):

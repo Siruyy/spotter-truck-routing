@@ -26,7 +26,7 @@ from plans.evaluate import (
     evaluate_route,
     score_dict,
 )
-from plans.grid import Grid, corridor_grid, viewport_grid
+from plans.grid import Grid, area_grid, viewport_grid
 from plans.models import SharedPlan
 from risk.rules import Conditions, assess
 from risk.scoring import recommend
@@ -246,13 +246,14 @@ def _round_or(v: float | None, nd: int) -> float:
 def heatmap_payload(
     grid: Grid, forecasts: dict[Cell, CellForecast], load_lb: float | None, start: int
 ) -> dict[str, Any]:
-    n = len(grid.points)
+    all_points = grid.points + grid.fine
+    n = len(all_points)
     risk: list[int] = [-1] * (n * HEATMAP_HOURS)
     wind: list[float] = [-1] * (n * HEATMAP_HOURS)
     rain: list[float] = [-1] * (n * HEATMAP_HOURS)
     snow: list[float] = [-1] * (n * HEATMAP_HOURS)
     wind_dir: list[float] = [-1] * (n * HEATMAP_HOURS)
-    for p, point in enumerate(grid.points):
+    for p, point in enumerate(all_points):
         fc = forecasts.get(snap(*point))
         if fc is None:
             continue
@@ -278,7 +279,8 @@ def heatmap_payload(
         "hours": HEATMAP_HOURS,
         "spacing": grid.spacing,
         "bbox": list(grid.bbox),
-        "points": [[p[0], p[1]] for p in grid.points],
+        "points": [[p[0], p[1]] for p in all_points],
+        "fine_from": len(grid.points),  # points[fine_from:] are exact route cells
         "layers": {"risk": risk, "wind": wind, "rain": rain, "snow": snow, "wind_dir": wind_dir},
         "load_applied": load_lb is not None,
     }
@@ -287,7 +289,9 @@ def heatmap_payload(
 async def _heatmap_for(grid: Grid, load_lb: float | None) -> dict[str, Any]:
     start = math.floor(time.time() / HOUR_S) * HOUR_S
     until = start + (HEATMAP_HOURS - 1) * HOUR_S
-    fs = await get_forecasts([snap(*p) for p in grid.points], until=until, allow_nws_fallback=False)
+    fs = await get_forecasts(
+        [snap(*p) for p in grid.points + grid.fine], until=until, allow_nws_fallback=False
+    )
     payload = heatmap_payload(grid, fs.cells, load_lb, start)
     payload["provider"] = fs.provider
     payload["stale_as_of"] = fs.stale_as_of
@@ -297,9 +301,15 @@ async def _heatmap_for(grid: Grid, load_lb: float | None) -> dict[str, Any]:
 async def plan_heatmap(plan_id: str) -> dict[str, Any]:
     state = await _state(plan_id)
     samples: list[LatLon] = []
+    fine: list[LatLon] = []
+    interval = int(state["request"]["interval_mi"])
     for r in state["routes"]:
-        samples.extend(_load_route(r).polyline.densified(15_000))
-    return await _heatmap_for(corridor_grid(samples), float(state["request"]["load_lb"]))
+        loaded = _load_route(r)
+        samples.extend(loaded.polyline.densified(15_000))
+        # The checkpoints' own cells: already cached by planning, so no extra API calls.
+        fine.extend(snap(*cp.position) for cp in sample(loaded.polyline, loaded.profile, interval))
+    grid = area_grid(samples, fine)
+    return await _heatmap_for(grid, float(state["request"]["load_lb"]))
 
 
 async def viewport_heatmap(
