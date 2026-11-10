@@ -1,0 +1,28 @@
+frontend/src/api/types.ts
+  s_874b9dace0bb92::t_5ff2e6897f4cc7 136-149
+frontend/src/api/hooks.ts
+  s_874b9dace0bb92::t_5ff2e6897f4cc7 4,64-73
+  s_874b9dace0bb92::t_a9ace3695204e8 74-76
+frontend/src/features/plan-form/ConditionsPreview.tsx
+  s_874b9dace0bb92::t_2e4853b41b30c6 2-32,37-67,69-154
+  s_874b9dace0bb92::t_8a6a04b204d41d 1,34
+  s_874b9dace0bb92::t_7d421a7f9bd3d7 33,35-36,68
+frontend/src/api/client.ts
+  s_874b9dace0bb92::t_5ff2e6897f4cc7 9,71-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9d806333511d51c6a9fcb67e04a8d21a8d6536ce",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
