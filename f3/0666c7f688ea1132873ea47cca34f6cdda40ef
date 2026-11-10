@@ -1,0 +1,42 @@
+frontend/src/features/map/heatmap/bake.ts
+  s_874b9dace0bb92::t_5bac04d244f101 5-9,28-30,35-39,48-51,60-64,70-76,78,171-172,181,189-190,194-201
+frontend/src/features/map/MapView.tsx
+  s_874b9dace0bb92::t_33ec2967c375e4 168
+  s_874b9dace0bb92::t_6b52412e0321cd 19,26,149-150,262-274,401-407
+  s_874b9dace0bb92::t_c3fd1def8a4350 408
+frontend/src/features/timeline/TimeSlider.tsx
+  s_874b9dace0bb92::t_33ec2967c375e4 7,43
+  s_874b9dace0bb92::t_26412ccd7b0414 95-97
+frontend/src/features/map/HeatmapOverlay.tsx
+  s_874b9dace0bb92::t_5bac04d244f101 40,45
+frontend/src/features/map/HeatReadout.tsx
+  s_874b9dace0bb92::t_588cc317ceb5fd 1-78
+frontend/src/store/ui.ts
+  s_874b9dace0bb92::t_33ec2967c375e4 2,32-33,45,78,105
+frontend/src/features/map/heatmap/bake.test.ts
+  s_874b9dace0bb92::t_0d3af58bddea14 34-45,47-48
+frontend/src/features/timeline/hourSummary.ts
+  s_874b9dace0bb92::t_33ec2967c375e4 1-22
+frontend/src/features/timeline/hourSummary.test.ts
+  s_874b9dace0bb92::t_0d3af58bddea14 1-25
+README.md
+  s_874b9dace0bb92::t_844dfcaa569c45 30-33
+docs/ARCHITECTURE.md
+  s_874b9dace0bb92::t_b41146b25bb244 87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f30666c7f688ea1132873ea47cca34f6cdda40ef",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
