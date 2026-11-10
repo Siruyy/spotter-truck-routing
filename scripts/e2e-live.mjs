@@ -88,8 +88,14 @@ const setHour = (p, h) => p.evaluate((h) => {
       requestAnimationFrame(step)
     })
     frames.shift()
-    const appRequests = performance.getEntriesByType('resource').slice(before).filter((e) => e.name.startsWith(location.origin)).length
-    return { fps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length), slow: frames.filter((f) => f > 33).length, appRequests }
+    // Only count requests *started* during the sweep: a slow alerts/heatmap call that began
+    // earlier and merely finished during it is not caused by scrubbing.
+    const appRequests = performance
+      .getEntriesByType('resource')
+      .slice(before)
+      .filter((e) => e.name.startsWith(location.origin) && e.startTime >= start)
+      .map((e) => e.name.replace(location.origin, ''))
+    return { fps: 1000 / (frames.reduce((a, b) => a + b, 0) / frames.length), slow: frames.filter((f) => f > 33).length, appRequests: appRequests.length, urls: appRequests }
   })
   // Headless runs use software GL (SwiftShader), so fps here is not representative; the
   // hard requirement checked is that scrubbing makes zero network requests.
