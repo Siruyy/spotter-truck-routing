@@ -208,4 +208,4 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## License
 
-[MIT](LICENSE). Third-party data keeps its own terms: Open-Meteo (CC BY 4.0), NWS and IEM (public domain), OpenStreetMap / OpenFreeMap (ODbL), and TomTom (their developer terms).
+Copyright (c) 2026 Neel Ulysses Roda. **All rights reserved.** This code is published for viewing and evaluation only; see [LICENSE](LICENSE). Third-party data keeps its own terms: Open-Meteo (CC BY 4.0), NWS and IEM (public domain), OpenStreetMap / OpenFreeMap (ODbL), and TomTom (their developer terms).
