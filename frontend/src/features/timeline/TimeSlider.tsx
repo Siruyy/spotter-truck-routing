@@ -4,6 +4,7 @@ import type { HeatLayer } from '@/api/types'
 import { cn } from '@/lib/cn'
 import { dayHour, sameDay, zoneAbbr } from '@/lib/time'
 import { useUi } from '@/store/ui'
+import { hourSummary } from './hourSummary'
 import { Legend } from './Legend'
 
 const LAYERS: { value: HeatLayer; label: string }[] = [
@@ -39,6 +40,7 @@ export function TimeSlider({ tz, compact = false }: { tz: string; compact?: bool
   const visible = useUi((s) => s.heatVisible)
   const setVisible = useUi((s) => s.setHeatVisible)
   const status = useUi((s) => s.heatStatus)
+  const heatData = useUi((s) => s.heatData)
   const radar = useUi((s) => s.radar)
   const setRadar = useUi((s) => s.setRadar)
   const lastTick = useRef<number | null>(null)
@@ -90,7 +92,9 @@ export function TimeSlider({ tz, compact = false }: { tz: string; compact?: bool
         ? 'Forecast heatmap is unavailable right now'
         : status === 'loading'
           ? 'Loading forecast…'
-          : null
+          : heatData
+            ? hourSummary(heatData, hour, layer)
+            : null
 
   return (
     <section

@@ -2,9 +2,11 @@
  * Turn a sparse lattice of hourly values into colored RGBA rasters.
  *
  * Grid points sit on a regular lat/lon lattice (with holes outside the route
- * corridor), so each pixel is a bilinear blend of up to four lattice corners,
- * renormalised over the corners that exist. Missing corners fade the alpha,
- * which gives the corridor a soft edge. Rows are laid out linearly in Web
+ * corridor). Continuous layers (wind, rain, snow) use a Gaussian-weighted
+ * average of nearby lattice values. Risk is categorical, so each pixel takes
+ * the level with the most weight nearby (a weighted vote): blending a Low cell
+ * with a No Travel cell must not paint a "High" that no rule produced.
+ * Coverage fades the alpha at the corridor edge. Rows are linear in Web
  * Mercator Y so the image lines up when drawn as a deck.gl BitmapLayer.
  */
 import type { HeatLayer } from '@/api/types'
@@ -23,15 +25,18 @@ export interface BakeInput {
 
 export type Rgba = [number, number, number, number]
 
+/** Opacity per risk level: Low stays visible but calm; hazards are bold. */
+const RISK_ALPHA = [92, 150, 178, 205, 225] as const
+
 const RAMPS: Record<Exclude<HeatLayer, 'risk'>, { max: number; stops: [number, Rgba][] }> = {
   wind: {
     max: 60,
     stops: [
-      [0, [94, 196, 222, 0]],
-      [10, [94, 196, 222, 0]],
-      [18, [94, 196, 222, 90]],
-      [25, [233, 196, 106, 150]],
-      [35, [244, 137, 44, 190]],
+      [0, [94, 196, 222, 40]],
+      [10, [94, 196, 222, 95]],
+      [20, [120, 200, 200, 130]],
+      [25, [233, 196, 106, 165]],
+      [35, [244, 137, 44, 195]],
       [45, [224, 65, 47, 215]],
       [55, [168, 85, 199, 235]],
     ],
@@ -40,9 +45,10 @@ const RAMPS: Record<Exclude<HeatLayer, 'risk'>, { max: number; stops: [number, R
     max: 1.2,
     stops: [
       [0, [91, 155, 213, 0]],
-      [0.02, [91, 155, 213, 70]],
-      [0.1, [80, 170, 230, 150]],
-      [0.25, [233, 196, 106, 190]],
+      [0.005, [91, 155, 213, 70]],
+      [0.03, [80, 170, 230, 125]],
+      [0.1, [80, 170, 230, 165]],
+      [0.25, [233, 196, 106, 195]],
       [0.5, [224, 65, 47, 215]],
       [1.0, [168, 85, 199, 235]],
     ],
@@ -51,23 +57,25 @@ const RAMPS: Record<Exclude<HeatLayer, 'risk'>, { max: number; stops: [number, R
     max: 3.5,
     stops: [
       [0, [220, 230, 255, 0]],
-      [0.05, [220, 230, 255, 80]],
-      [0.5, [180, 205, 255, 170]],
-      [1.0, [233, 196, 106, 200]],
-      [2.0, [224, 65, 47, 220]],
+      [0.02, [220, 230, 255, 80]],
+      [0.2, [200, 215, 255, 140]],
+      [0.5, [180, 205, 255, 180]],
+      [1.0, [233, 196, 106, 205]],
+      [2.0, [224, 65, 47, 222]],
       [3.0, [168, 85, 199, 240]],
     ],
   },
 }
 
+/** Color for a risk level (exact level, never blended). */
+export function riskColor(level: number): Rgba {
+  const l = Math.min(4, Math.max(0, Math.round(level)))
+  const [r, g, b] = riskRgb(l)
+  return [r, g, b, RISK_ALPHA[l] as number]
+}
+
 export function colorFor(layer: HeatLayer, v: number): Rgba {
-  if (layer === 'risk') {
-    const [r, g, b] = riskRgb(v)
-    // Low risk is a faint wash so the basemap reads through; hazards are bold.
-    const t = Math.min(4, Math.max(0, v))
-    const a = t < 1 ? 28 + t * 92 : 120 + (t - 1) * 30
-    return [r, g, b, a]
-  }
+  if (layer === 'risk') return riskColor(v)
   const { stops } = RAMPS[layer]
   const first = stops[0] as [number, Rgba]
   if (v <= first[0]) return first[1]
@@ -160,6 +168,8 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
     }
   }
 
+  const categorical = layer === 'risk'
+  const votes = new Float32Array(5)
   const frames: Uint8ClampedArray[] = []
   for (let h = 0; h < hours; h++) {
     const out = new Uint8ClampedArray(pixelCount * 4)
@@ -168,6 +178,7 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
       if ((coverage[p] as number) < 0.05) continue
       let sum = 0
       let wsum = 0
+      if (categorical) votes.fill(0)
       const base = p * slots
       for (let s = 0; s < slots; s++) {
         const idx = idxs[base + s] as number
@@ -175,11 +186,19 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
         const v = values[offset + idx] as number
         if (v < 0) continue
         const w = weights[base + s] as number
-        sum += v * w
+        if (categorical) votes[v] = (votes[v] as number) + w
+        else sum += v * w
         wsum += w
       }
       if (wsum < 0.05) continue
-      const [r, g, b, a] = colorFor(layer, sum / wsum)
+      let value = sum / wsum
+      if (categorical) {
+        // Weighted vote; ties go to the more severe level (safety first).
+        let best = 0
+        for (let l = 1; l < 5; l++) if ((votes[l] as number) >= (votes[best] as number)) best = l
+        value = best
+      }
+      const [r, g, b, a] = colorFor(layer, value)
       // Fade out where the corridor thins (coverage ~1 inside, -> 0 at the edge).
       const edge = Math.min(1, Math.max(0, (wsum - 0.05) / 0.6))
       const o = p * 4

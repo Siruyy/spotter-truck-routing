@@ -84,6 +84,7 @@ frontend/src/
 
 1. **Payload.** The heatmap payload is hour-major arrays: `layers.risk[h * points + p]`. Risk uses the trip's load weight.
 2. **Baking.** `heatmap/bake.worker.ts` computes, once per (heatmap, layer), per-pixel Gaussian weights to nearby lattice points. Each hour is then a weighted sum per pixel, colored with a fixed ramp. Rows are laid out linearly in Web Mercator Y, so the image lines up with the basemap. The result is 49 `ImageBitmap`s, transferred to the main thread without copying.
+   - **Risk is categorical.** A pixel's level is a weighted vote among nearby lattice levels (ties go to the more severe level), not an average. Averaging a Low and a No Travel cell would otherwise paint a "High" that no rule produced. Wind, rain and snow are continuous and use the weighted average.
 3. **Drawing.** `HeatmapOverlay` subscribes to the store's `hour`, outside React. On each animation frame it sets two `BitmapLayer`s, frames ⌊h⌋ and ⌊h⌋ + 1, with opacity equal to the fractional part.
 4. **Truck marker.** It uses the same subscription pattern: ETA → mile (interpolated between checkpoints) → point along the drawn line.
 

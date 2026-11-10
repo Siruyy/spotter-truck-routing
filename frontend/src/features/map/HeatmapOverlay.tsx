@@ -37,12 +37,12 @@ export function HeatmapOverlay({ frames, visible, beforeId }: Props) {
       }
       overlay.setProps({
         layers: [
-          new BitmapLayer({ ...common, id: 'heat-base', image: frames.frames[h0], opacity: 0.85 }),
+          new BitmapLayer({ ...common, id: 'heat-base', image: frames.frames[h0], opacity: 0.95 }),
           new BitmapLayer({
             ...common,
             id: 'heat-next',
             image: frames.frames[h1],
-            opacity: h1 === h0 ? 0 : 0.85 * frac,
+            opacity: h1 === h0 ? 0 : 0.95 * frac,
           }),
         ],
       })

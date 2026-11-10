@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { HeatLayer, IntervalMi, Plan } from '@/api/types'
+import type { Heatmap, HeatLayer, IntervalMi, Plan } from '@/api/types'
 
 export type Theme = 'dark' | 'light'
 export type SheetSnap = 'peek' | 'half' | 'full'
@@ -29,6 +29,8 @@ interface UiState {
   /** Epoch of slider hour 0 (top of the current hour, from the heatmap payload). */
   heatStart: number
   heatStatus: 'idle' | 'loading' | 'ready' | 'unavailable' | 'zoom-in'
+  /** The heatmap currently drawn, for the timeline's per-hour summary. */
+  heatData: Heatmap | null
   setPlan: (plan: Plan | null, origin?: UiState['planOrigin'], sharedAt?: string | null) => void
   selectRoute: (id: string) => void
   setFocus: (f: FocusCheckpoint | null) => void
@@ -40,7 +42,7 @@ interface UiState {
   setRadar: (v: boolean) => void
   setTheme: (t: Theme) => void
   setSheet: (s: SheetSnap) => void
-  setHeat: (start: number | null, status: UiState['heatStatus']) => void
+  setHeat: (start: number | null, status: UiState['heatStatus'], data?: Heatmap | null) => void
 }
 
 function currentHour(): number {
@@ -73,6 +75,7 @@ export const useUi = create<UiState>((set) => ({
   sheet: 'half',
   heatStart: currentHour(),
   heatStatus: 'idle',
+  heatData: null,
   setPlan: (plan, origin = 'live', sharedAt = null) =>
     set({
       plan,
@@ -99,7 +102,7 @@ export const useUi = create<UiState>((set) => ({
     set({ theme })
   },
   setSheet: (sheet) => set({ sheet }),
-  setHeat: (start, heatStatus) => set({ heatStart: start ?? currentHour(), heatStatus }),
+  setHeat: (start, heatStatus, data = null) => set({ heatStart: start ?? currentHour(), heatStatus, heatData: data }),
 }))
 
 export function selectedRoute(state: Pick<UiState, 'plan' | 'selectedRouteId'>) {

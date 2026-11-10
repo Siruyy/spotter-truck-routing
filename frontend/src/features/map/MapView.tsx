@@ -16,12 +16,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePlanHeatmap, useViewportHeatmap } from '@/api/hooks'
 import type { Checkpoint, PlannedRoute } from '@/api/types'
 import { riskSegments } from '@/lib/geo'
+import { browserTz } from '@/lib/time'
 import { LEVELS, UNKNOWN_META } from '@/lib/risk'
 import { selectedRoute, useUi } from '@/store/ui'
 import { CheckpointDetails } from '@/features/results/CheckpointDetails'
 import { HeatmapOverlay } from './HeatmapOverlay'
 import { useHeatmapFrames } from './heatmap/useHeatmapFrames'
 import { MAP_STYLES, ROUTE_FALLBACK_COLOR, US_VIEW } from './mapStyle'
+import { HeatReadout, type ReadoutPos } from './HeatReadout'
 import { TruckMarker } from './TruckMarker'
 
 type Bbox = [number, number, number, number]
@@ -144,6 +146,8 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
   const [labelsBefore, setLabelsBefore] = useState<string | undefined>()
   const [viewBbox, setViewBbox] = useState<Bbox | null>(null)
   const [zoomedOut, setZoomedOut] = useState(false)
+  const [readout, setReadout] = useState<ReadoutPos | null>(null)
+  const readoutRaf = useRef(0)
 
   const planHeat = usePlanHeatmap(plan?.id ?? null, heatVisible && plan !== null)
   // Shared or offline plans may have expired server-side: fall back to a heatmap of the trip's area.
@@ -161,7 +165,7 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
     if (!heatVisible) setHeat(null, 'idle')
     else if (!plan && zoomedOut) setHeat(null, 'zoom-in')
     else if (heat.isError) setHeat(null, 'unavailable')
-    else if (heat.data && frames) setHeat(heat.data.start, 'ready')
+    else if (heat.data && frames) setHeat(heat.data.start, 'ready', heat.data)
     else setHeat(heat.data?.start ?? null, 'loading')
   }, [heatVisible, plan, zoomedOut, heat.isError, heat.data, frames, setHeat])
 
@@ -255,6 +259,19 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
       onStyleData={findLabelLayer}
       onMoveEnd={onMoveEnd}
       onClick={onClick}
+      onMouseMove={(e) => {
+        if (!heatVisible) return
+        const { point, lngLat } = e
+        cancelAnimationFrame(readoutRaf.current)
+        readoutRaf.current = requestAnimationFrame(() =>
+          setReadout({ x: point.x, y: point.y, lon: lngLat.lng, lat: lngLat.lat }),
+        )
+      }}
+      onMouseOut={() => {
+        cancelAnimationFrame(readoutRaf.current)
+        setReadout(null)
+      }}
+      onDragStart={() => setReadout(null)}
       interactiveLayerIds={['checkpoints', 'route-other-hit']}
       cursor="auto"
       attributionControl={{ compact: true, customAttribution: 'Weather © <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0) · Alerts & radar: NWS / IEM · Routing © TomTom' }}
@@ -380,6 +397,14 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
       )}
 
       <TruckMarker route={route} />
+
+      {heatVisible && (
+        <HeatReadout
+          heat={heat.data ?? null}
+          pos={readout}
+          tz={plan?.routes[0]?.checkpoints[0]?.tz ?? browserTz()}
+        />
+      )}
 
       {focused && route && (
         <Popup

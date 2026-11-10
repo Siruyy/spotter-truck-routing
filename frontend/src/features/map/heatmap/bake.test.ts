@@ -31,8 +31,21 @@ describe('heatmap baking', () => {
     expect(frames[1]!.every((v) => v === 0)).toBe(true)
   })
 
+  it('paints risk as exact levels, never a blend between neighbours', () => {
+    // Left half Low (0), right half No Travel (4): no pixel may come out Moderate/High/Severe.
+    const values = points.map(([, lon]) => (lon < -99 ? 0 : 4))
+    const bbox = rasterBounds({ points, spacing: 0.5 })
+    const [frame] = bakeFrames({ layer: 'risk', hours: 1, spacing: 0.5, bbox, points, values, width: 64, height: 64 })
+    const allowed = new Set([colorFor('risk', 0), colorFor('risk', 4)].map((c) => `${c[0]},${c[1]},${c[2]}`))
+    for (let i = 0; i < frame!.length; i += 4) {
+      if (frame![i + 3] === 0) continue
+      expect(allowed.has(`${frame![i]},${frame![i + 1]},${frame![i + 2]}`)).toBe(true)
+    }
+  })
+
   it('maps layer values onto ordered ramps', () => {
-    expect(colorFor('wind', 5)[3]).toBe(0) // calm is invisible
+    expect(colorFor('wind', 5)[3]).toBeGreaterThan(0) // calm is visible but faint
+    expect(colorFor('wind', 5)[3]).toBeLessThan(100)
     expect(colorFor('wind', 45)[3]).toBeGreaterThan(colorFor('wind', 25)[3])
     expect(colorFor('risk', 0)[3]).toBeLessThan(colorFor('risk', 4)[3])
     expect(mercY(0)).toBe(0)
