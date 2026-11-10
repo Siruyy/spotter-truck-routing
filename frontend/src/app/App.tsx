@@ -147,11 +147,11 @@ export function App() {
               {bootError}
             </p>
           )}
-          <div className="mb-5">
+          <div className="mb-6 text-center">
             <h1 className="font-display text-[30px] font-bold leading-[1.08] sm:text-[34px]">
               {plan ? 'Change your trip' : 'Which route is safest right now?'}
             </h1>
-            <p className="mt-2 max-w-[60ch] text-[16px] text-muted">
+            <p className="mx-auto mt-2 max-w-[60ch] text-[16px] text-muted">
               We compare three truck routes against the forecast for the hour you’ll actually reach each stretch of
               road.
             </p>
