@@ -43,6 +43,26 @@ describe('heatmap baking', () => {
     }
   })
 
+  it('lets exact route cells override the coarse grid near the road', () => {
+    // Coarse grid all Low; one route cell (off-lattice) is Severe.
+    const route: [number, number] = [41.07, -99.03]
+    const all = [...points, route]
+    const values = [...points.map(() => 0), 3]
+    const bbox = rasterBounds({ points, spacing: 0.5 })
+    const [w, h] = [96, 96]
+    const [frame] = bakeFrames({ layer: 'risk', hours: 1, spacing: 0.5, bbox, points: all, fineFrom: points.length, values, width: w, height: h })
+    const px = Math.round(((route[1] - bbox[0]) / (bbox[2] - bbox[0])) * w)
+    const yTop = mercY(bbox[3])
+    const py = Math.round(((mercY(route[0]) - yTop) / (mercY(bbox[1]) - yTop)) * h)
+    const o = (py * w + px) * 4
+    const sev = colorFor('risk', 3)
+    expect([frame![o], frame![o + 1], frame![o + 2]]).toEqual([sev[0], sev[1], sev[2]])
+    // Far from the route cell, the coarse Low value still shows.
+    const far = (5 * w + 5) * 4
+    const low = colorFor('risk', 0)
+    if (frame![far + 3]! > 0) expect([frame![far], frame![far + 1], frame![far + 2]]).toEqual([low[0], low[1], low[2]])
+  })
+
   it('maps layer values onto ordered ramps', () => {
     expect(colorFor('wind', 5)[3]).toBeGreaterThan(0) // calm is visible but faint
     expect(colorFor('wind', 5)[3]).toBeLessThan(100)

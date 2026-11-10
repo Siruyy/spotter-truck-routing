@@ -102,6 +102,8 @@ export interface Heatmap {
   spacing: number
   bbox: [number, number, number, number]
   points: [number, number][] // [lat, lon]
+  /** points[fine_from:] are the checkpoints' exact cells along the routes. */
+  fine_from?: number
   layers: Record<HeatLayer, number[]> & { wind_dir?: number[] } // hour-major: h * points + p; -1 = missing
   load_applied: boolean
   provider: string

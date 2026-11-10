@@ -18,6 +18,8 @@ export interface BakeInput {
   spacing: number
   bbox: [number, number, number, number]
   points: [number, number][]
+  /** points[fineFrom:] are exact route cells (off-lattice); default: none. */
+  fineFrom?: number
   values: number[] // hour-major, -1 = missing
   width: number
   height: number
@@ -115,6 +117,13 @@ function lattice(points: [number, number][], spacing: number): Map<number, numbe
 
 const KERNEL_REACH = 2 // lattice cells searched in each direction
 const SIGMA_CELLS = 0.85 // Gaussian width, in lattice cells
+// Exact route cells: tight kernel (~7 mi) with a strong weight, so within a few
+// miles of the road the map shows the checkpoints' own values, blending out to
+// the coarse area forecast further away.
+const FINE_CELL_DEG = 0.1
+const FINE_SIGMA_DEG = 0.1
+const FINE_REACH = 3
+const FINE_BOOST = 6
 
 /**
  * Bake one frame per hour. Each pixel is a Gaussian-weighted average of nearby
@@ -126,7 +135,21 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
   const { width, height, bbox, spacing, points, values, hours, layer } = input
   const [west, south, east, north] = bbox
   const n = points.length
-  const cells = lattice(points, spacing)
+  const fineFrom = Math.min(n, input.fineFrom ?? n)
+  const cells = lattice(points.slice(0, fineFrom), spacing)
+  // Spatial hash of the exact route cells.
+  const fineCells = new Map<number, number[]>()
+  for (let i = fineFrom; i < n; i++) {
+    const [lat, lon] = points[i] as [number, number]
+    const key = Math.round(lat / FINE_CELL_DEG) * 100_000 + Math.round(lon / FINE_CELL_DEG)
+    const bucket = fineCells.get(key)
+    if (bucket) bucket.push(i)
+    else fineCells.set(key, [i])
+  }
+  const fineIdxList: number[] = []
+  const fineWList: number[] = []
+  const fineStart = new Int32Array(width * height + 1)
+  const twoFineSigma2 = 2 * FINE_SIGMA_DEG * FINE_SIGMA_DEG
   const yTop = mercY(north)
   const yBottom = mercY(south)
   const k = KERNEL_REACH * 2 + 1
@@ -164,9 +187,34 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
           slot++
         }
       }
+      // Exact route cells near this pixel.
+      fineStart[p] = fineIdxList.length
+      if (fineCells.size) {
+        const fi2 = Math.round(lat / FINE_CELL_DEG)
+        const fj2 = Math.round(lon / FINE_CELL_DEG)
+        for (let di = -FINE_REACH; di <= FINE_REACH; di++) {
+          for (let dj = -FINE_REACH; dj <= FINE_REACH; dj++) {
+            const bucket = fineCells.get((fi2 + di) * 100_000 + (fj2 + dj))
+            if (!bucket) continue
+            for (const idx of bucket) {
+              const [plat, plon] = points[idx] as [number, number]
+              const dy = plat - lat
+              const dx = (plon - lon) * lonScale
+              const w = FINE_BOOST * Math.exp(-(dx * dx + dy * dy) / twoFineSigma2)
+              if (w < 0.02) continue
+              fineIdxList.push(idx)
+              fineWList.push(w)
+              cover += w
+            }
+          }
+        }
+      }
       coverage[p] = cover
     }
   }
+  fineStart[width * height] = fineIdxList.length
+  const fineIdx = Int32Array.from(fineIdxList)
+  const fineW = Float32Array.from(fineWList)
 
   const categorical = layer === 'risk'
   const votes = new Float32Array(5)
@@ -186,6 +234,14 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
         const v = values[offset + idx] as number
         if (v < 0) continue
         const w = weights[base + s] as number
+        if (categorical) votes[v] = (votes[v] as number) + w
+        else sum += v * w
+        wsum += w
+      }
+      for (let f = fineStart[p] as number; f < (fineStart[p + 1] as number); f++) {
+        const v = values[offset + (fineIdx[f] as number)] as number
+        if (v < 0) continue
+        const w = fineW[f] as number
         if (categorical) votes[v] = (votes[v] as number) + w
         else sum += v * w
         wsum += w

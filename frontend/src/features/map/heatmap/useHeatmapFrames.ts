@@ -60,6 +60,7 @@ export function useHeatmapFrames(heatmap: Heatmap | null, layer: HeatLayer): Hea
       spacing: heatmap.spacing,
       bbox: bounds,
       points: heatmap.points,
+      fineFrom: heatmap.fine_from,
       values: heatmap.layers[layer],
       width,
       height,
