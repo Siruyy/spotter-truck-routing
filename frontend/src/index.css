@@ -213,6 +213,14 @@ select {
   pointer-events: none;
 }
 
+/* Animated weather particles (wind / rain / snow), between the map and its markers. */
+.weather-fx {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
 /* ---- Time slider ------------------------------------------------------- */
 .hour-range {
   -webkit-appearance: none;

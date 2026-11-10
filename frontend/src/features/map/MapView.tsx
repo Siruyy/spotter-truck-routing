@@ -25,6 +25,7 @@ import { useHeatmapFrames } from './heatmap/useHeatmapFrames'
 import { MAP_STYLES, ROUTE_FALLBACK_COLOR, US_VIEW } from './mapStyle'
 import { HeatReadout, type ReadoutPos } from './HeatReadout'
 import { TruckMarker } from './TruckMarker'
+import { WeatherFx } from './weatherFx/WeatherFx'
 
 type Bbox = [number, number, number, number]
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] }
@@ -397,6 +398,7 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
       )}
 
       <TruckMarker route={route} />
+      <WeatherFx layer={heatLayer} visible={heatVisible} />
 
       {heatVisible && (
         <HeatReadout

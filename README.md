@@ -29,7 +29,9 @@ TruckRoute gets three truck routes. It samples the forecast every 10, 25 or 50 m
 - **Trip strip.** Each route card has a bar showing risk by mile, so the answer is readable without studying the map.
 - **Heatmap with a 0–48 h slider.** The map shows Risk, Wind, Rain or Snow across the trip corridor, and scrubbing is smooth (details below).
   - **Risk layer:** drawn as exact level bands. Each pixel takes the level with the most weight nearby, never a blend, so it can't show a level no rule produced.
-  - **Hover readout:** shows the exact wind, rain, snow and level under the cursor for the slider hour.
+  - **Animated weather:** the Wind layer shows particles flowing with the forecast wind (direction and speed), Rain shows falling streaks and Snow shows drifting flakes. Each appears only where that weather is forecast and follows the slider hour. With reduced motion, wind is drawn as static direction arrows instead.
+  - **Hover readout:** shows the exact wind (with direction), rain, snow and level under the cursor for the slider hour.
+  - **Full-area coverage:** the map is shaded across the whole area around the trip, with no gaps between routes. Near the road it blends in the checkpoints' exact forecast cells (already cached, so no extra API calls), so the map agrees with the checkpoints along the route.
   - **Timeline summary:** describes each hour in one line, for example *"This hour: all Low across the area (wind up to 12 mph)"*, so a calm map reads as calm, not empty.
 - **Truck marker** that follows the slider along the selected route.
 - **Better departure time.** The same routes are re-scored for leaving 1, 2, 4, 6 or 12 h later. The app suggests the safest later time, and one tap re-plans.

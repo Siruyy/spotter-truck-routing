@@ -84,11 +84,20 @@ frontend/src/
 
 1. **Payload.** The heatmap payload is hour-major arrays: `layers.risk[h * points + p]`. Risk uses the trip's load weight.
 2. **Baking.** `heatmap/bake.worker.ts` computes, once per (heatmap, layer), per-pixel Gaussian weights to nearby lattice points. Each hour is then a weighted sum per pixel, colored with a fixed ramp. Rows are laid out linearly in Web Mercator Y, so the image lines up with the basemap. The result is 49 `ImageBitmap`s, transferred to the main thread without copying.
+   - **Exact route cells.** The payload's `points[fine_from:]` are the checkpoints' own 0.1° cells. They use a tight, heavily weighted kernel, so near the road the map shows the same values the recommendation uses. The coarse lattice spans the whole padded area, so there are no gaps between routes.
    - **Risk is categorical.** A pixel's level is a weighted vote among nearby lattice levels (ties go to the more severe level), not an average. Averaging a Low and a No Travel cell would otherwise paint a "High" that no rule produced. Wind, rain and snow are continuous and use the weighted average.
 3. **Drawing.** `HeatmapOverlay` subscribes to the store's `hour`, outside React. On each animation frame it sets two `BitmapLayer`s, frames ⌊h⌋ and ⌊h⌋ + 1, with opacity equal to the fractional part.
 4. **Truck marker.** It uses the same subscription pattern: ETA → mile (interpolated between checkpoints) → point along the drawn line.
 
 Dragging the slider therefore makes no network requests and no React re-renders of the map or panels.
+
+### Weather animation
+
+`features/map/weatherFx` draws on a 2D canvas inserted between the map canvas and its markers:
+- `WeatherField` bilinearly samples the coarse lattice for the slider hour, returning wind direction, speed, rain and snow.
+- **Wind:** up to 2,400 screen-space particles step along the wind vector each frame. Step length scales with speed, and trails come from fading the previous frame. Colors bucket by speed.
+- **Rain and snow:** drops and flakes are placed by rejection sampling against the forecast intensity, so they only appear where the forecast has precipitation, denser where heavier.
+- **When it runs:** only for the active layer, paused in hidden tabs, and re-seeded whenever the map moves. Measured at 60 fps on the GPU while animating. With reduced motion, wind is drawn as static arrows instead.
 
 ### Planner-to-results morph
 
