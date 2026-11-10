@@ -173,3 +173,19 @@ async def test_viewport_heatmap_and_bad_bbox(upstream) -> None:
 async def test_health(fake_redis) -> None:
     body = (await AsyncClient().get("/api/health")).json()
     assert body["redis"] is True
+
+
+@pytest.mark.django_db
+async def test_point_conditions_scores_with_load(upstream) -> None:
+    client = AsyncClient()
+    light = (await client.get("/api/weather/point?lat=39.7&lon=-104.99&hours=6")).json()
+    heavy = (
+        await client.get("/api/weather/point?lat=39.7&lon=-104.99&hours=6&load_lb=42000")
+    ).json()
+    assert light["tz"] == "America/Chicago"
+    assert 6 <= len(light["hours"]) <= 7
+    assert {h["level"] for h in light["hours"]} == {2}  # 38 mph -> High
+    assert {h["level"] for h in heavy["hours"]} == {3}  # 42k lb escalates to Severe
+    assert heavy["hours"][0]["wind_mph"] == 38.0
+    bad = await client.get("/api/weather/point?lat=10&lon=-100")
+    assert bad.status_code == 422

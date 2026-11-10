@@ -310,6 +310,45 @@ async def viewport_heatmap(
     return await _heatmap_for(grid, load_lb)
 
 
+# --- Point conditions -------------------------------------------------------
+
+POINT_MAX_HOURS = 24
+
+
+async def point_conditions(
+    lat: float, lon: float, hours: int, load_lb: float | None
+) -> dict[str, Any]:
+    """Hourly conditions and risk at one place, for the planner's preview."""
+    hours = max(1, min(hours, POINT_MAX_HOURS))
+    start = math.floor(time.time() / HOUR_S) * HOUR_S
+    cell = snap(lat, lon)
+    fs = await get_forecasts([cell], until=start + hours * HOUR_S)
+    fc = fs.cells.get(cell)
+    rows: list[dict[str, Any]] = []
+    if fc is not None:
+        for h in range(hours + 1):
+            t = start + h * HOUR_S
+            k = fc.index_for(t)
+            if k is None:
+                continue
+            v = fc.at_index(k)
+            level = factor = None
+            if v.complete:
+                a = assess(
+                    Conditions(v.wind_mph or 0, v.rain_in_hr or 0, v.snow_in_hr or 0, v.gust_mph),
+                    load_lb or 0,
+                )
+                level, factor = int(a.level), a.factor
+            rows.append({"t": t, "level": level, "factor": factor, **v.to_dict()})
+    return {
+        "tz": fc.timezone if fc else "UTC",
+        "provider": fs.provider,
+        "stale_as_of": fs.stale_as_of,
+        "load_applied": load_lb is not None,
+        "hours": rows,
+    }
+
+
 # --- Alerts ----------------------------------------------------------------
 
 

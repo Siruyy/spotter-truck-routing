@@ -124,6 +124,18 @@ async def get_shared(request: HttpRequest, slug: str) -> dict[str, Any]:
     return await service.get_shared(slug)
 
 
+@api.get("/weather/point")
+async def weather_point(
+    request: HttpRequest,
+    lat: float = Query(..., ge=18, le=72),
+    lon: float = Query(..., ge=-180, le=-60),
+    hours: int = Query(12, ge=1, le=24),
+    load_lb: float | None = Query(None, ge=0, le=50_000),
+) -> dict[str, Any]:
+    await enforce_rate_limit("suggest", _ip(request), settings.RATE_LIMIT_SUGGEST_PER_MIN)
+    return await service.point_conditions(lat, lon, hours, load_lb)
+
+
 @api.get("/heatmap")
 async def viewport_heatmap(
     request: HttpRequest,
