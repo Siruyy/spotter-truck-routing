@@ -6,11 +6,13 @@ Pick the safest truck route for the weather, the load and the departure time.
 
 TruckRoute gets three truck routes. It samples the forecast every 10, 25 or 50 miles **for the hour the truck will actually reach that point**, and scores each point with the assessment's risk and load rules. It then recommends a route and states the reason. A 0–48 h forecast slider moves a weather heatmap and a truck marker together, so a driver can see where the truck will be and what the weather will be there at the same time.
 
-| Recommendation and route options | Severe checkpoint, rain heatmap, truck at that hour |
+| Planner with live weather at both ends | Recommendation and route options |
 |---|---|
-| ![Results](docs/screenshots/desktop-results.jpg) | ![Checkpoint](docs/screenshots/desktop-checkpoint.jpg) |
-| **Light theme** | **Offline: last trip restored with the network cut** |
-| ![Light theme](docs/screenshots/desktop-light.jpg) | ![Offline](docs/screenshots/offline.jpg) |
+| ![Planner](docs/screenshots/planner.jpg) | ![Results](docs/screenshots/desktop-results.jpg) |
+| **Severe checkpoint, rain heatmap, truck at that hour** | **Light theme** |
+| ![Checkpoint](docs/screenshots/desktop-checkpoint.jpg) | ![Light theme](docs/screenshots/desktop-light.jpg) |
+| **Offline: last trip restored with the network cut** | |
+| ![Offline](docs/screenshots/offline.jpg) | |
 
 <p align="center"><img src="docs/screenshots/mobile-results.jpg" width="300" alt="Phone layout with bottom sheet"></p>
 
@@ -18,6 +20,8 @@ TruckRoute gets three truck routes. It samples the forecast every 10, 25 or 50 m
 
 ## What it does
 
+- **Planner first.** Every visit opens on a centered planner over a softly blurred map, so the first action is entering the trip. When the plan arrives, the card morphs into the results sidebar using the View Transitions API; **Edit** morphs it back.
+- **Live weather while you plan.** As soon as a start or destination is picked, the planner shows current conditions there and a 12-hour risk strip scored for your load (`GET /api/weather/point`).
 - **Three truck routes.** TomTom truck routing uses the gross weight, departure time and live traffic. When TomTom returns fewer than three routes, the backend adds alternatives through via points on either side of the trip and drops near-duplicates.
 - **Checkpoints at the truck's ETA.** Checkpoints sit every 10, 25 or 50 miles. Each ETA comes from TomTom's travel time along the route. The weather is the forecast hour that contains that ETA, shown in the checkpoint's local timezone.
 - **Risk and load rules.** Wind, rain and snow are classified exactly per the brief, and heavy loads escalate wind risk. The checkpoint's level is the worst of the three.
@@ -35,7 +39,7 @@ TruckRoute gets three truck routes. It samples the forecast every 10, 25 or 50 m
 - Dark theme by default, with a light theme. Tap targets are at least 48 px and body text at least 16 px.
 - **Risk is never shown by color alone.** Each level has an icon, a text label, a map dash pattern and a trip-strip texture.
 - The palette is an ordered ramp with no red/green pair, so it works for the most common forms of color blindness.
-- Pre-trip planning framing with an FMCSA hand-held-device disclaimer. `prefers-reduced-motion` is respected.
+- Motion that explains state: the planner-to-sidebar morph, staggered result entrances, a glow on the recommendation, an animated progress bar while planning, press feedback on controls, and a shake on errors. `prefers-reduced-motion` turns all of it off.
 - The phone layout uses a draggable bottom sheet and a compact timeline.
 
 ---

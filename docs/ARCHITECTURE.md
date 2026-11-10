@@ -27,6 +27,8 @@ sequenceDiagram
   UI->>API: GET /plans/{id}/heatmap (when visible), GET /plans/{id}/alerts
 ```
 
+The planner's conditions preview calls `GET /api/weather/point?lat&lon&hours=12&load_lb`. It reads the same 0.1° forecast cache, so previewing a place warms the cells the plan will use.
+
 Changing the checkpoint spacing calls `GET /plans/{id}?interval_mi=` and re-samples from the stored state. It makes no routing calls.
 
 ## Backend layout
@@ -86,6 +88,12 @@ frontend/src/
 4. **Truck marker.** It uses the same subscription pattern: ETA → mile (interpolated between checkpoints) → point along the drawn line.
 
 Dragging the slider therefore makes no network requests and no React re-renders of the map or panels.
+
+### Planner-to-results morph
+
+The planner card and the results sidebar (or the mobile bottom sheet) share `view-transition-name: planner`. Only one of them carries the name at a time. `lib/viewTransition.ts` wraps the state change in `document.startViewTransition` with `flushSync`, so the browser morphs one box into the other while the map resizes and fits the routes.
+
+The update is applied immediately in three cases: without View Transitions support, with reduced motion, or in a hidden tab. If the browser hasn't started the transition within 400 ms, it is skipped and the update applied, so the UI can never wait on an animation.
 
 ### Map layering
 
