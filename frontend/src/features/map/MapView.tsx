@@ -173,7 +173,14 @@ export function MapView({ padding, showZoom = false }: { padding: PaddingOptions
 
   // Fit to the routes whenever a new plan arrives.
   useEffect(() => {
-    if (plan && mapRef.current) fitPlan(mapRef.current, plan.routes, padding)
+    const map = mapRef.current
+    if (!plan || !map) return
+    // The sidebar may have just appeared (planner -> results), so size first, then fit.
+    const id = requestAnimationFrame(() => {
+      map.resize()
+      fitPlan(map, plan.routes, padding)
+    })
+    return () => cancelAnimationFrame(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plan?.id])
 

@@ -6,7 +6,10 @@ import type { IntervalMi, Place, Plan } from '@/api/types'
 import { Segmented } from '@/components/ui/Segmented'
 import { rememberLoad, saveLastTrip, savedLoad } from '@/lib/persist'
 import { browserTz, tzAt } from '@/lib/time'
+import { cn } from '@/lib/cn'
+import { withViewTransition } from '@/lib/viewTransition'
 import { useUi } from '@/store/ui'
+import { ConditionsPreview } from './ConditionsPreview'
 import { type DepartureChoice, resolveDeparture } from './departure'
 import { DepartureField } from './DepartureField'
 import { LoadField } from './LoadField'
@@ -35,9 +38,12 @@ function usePendingStage(pending: boolean): string {
 interface Props {
   initial?: Plan | null
   onPlanned: () => void
+  /** "split" puts places + weather on the left and trip settings on the right (wide planner card). */
+  layout?: 'stacked' | 'split'
+  onPendingChange?: (pending: boolean) => void
 }
 
-export function PlanForm({ initial, onPlanned }: Props) {
+export function PlanForm({ initial, onPlanned, layout = 'stacked', onPendingChange }: Props) {
   const setPlan = useUi((s) => s.setPlan)
   const [origin, setOrigin] = useState<Place | null>(initial?.request.origin ?? null)
   const [destination, setDestination] = useState<Place | null>(initial?.request.destination ?? null)
@@ -46,6 +52,7 @@ export function PlanForm({ initial, onPlanned }: Props) {
   const [interval, setIntervalMi] = useState<IntervalMi>(initial?.request.interval_mi ?? 25)
   const mutation = useCreatePlan()
   const stage = usePendingStage(mutation.isPending)
+  useEffect(() => onPendingChange?.(mutation.isPending), [mutation.isPending, onPendingChange])
 
   const tz = useMemo(() => (origin ? tzAt(origin.lat, origin.lon) : browserTz()), [origin])
   const ready = origin !== null && destination !== null
@@ -67,9 +74,12 @@ export function PlanForm({ initial, onPlanned }: Props) {
       },
       {
         onSuccess: (plan) => {
-          setPlan(plan)
           void saveLastTrip(plan)
-          onPlanned()
+          // Morph the planner into the results sidebar.
+          withViewTransition(() => {
+            setPlan(plan)
+            onPlanned()
+          })
         },
       },
     )
@@ -77,45 +87,46 @@ export function PlanForm({ initial, onPlanned }: Props) {
 
   const error = mutation.error instanceof ApiError ? mutation.error.message : mutation.error ? 'Something went wrong.' : null
 
-  return (
-    <form onSubmit={submit} className="flex flex-col gap-5" aria-label="Plan a trip">
-      <div className="relative flex flex-col gap-3">
-        <PlaceInput
-          label="From"
-          placeholder="City, address or truck stop"
-          value={origin}
-          onChange={setOrigin}
-          near={destination}
-          allowLocate
-          marker="origin"
-        />
-        <PlaceInput
-          label="To"
-          placeholder="Where are you headed?"
-          value={destination}
-          onChange={setDestination}
-          near={origin}
-          marker="destination"
-        />
-        {(origin || destination) && (
-          <button
-            type="button"
-            onClick={() => {
-              setOrigin(destination)
-              setDestination(origin)
-            }}
-            className="absolute right-14 top-[calc(50%-4px)] z-10 grid size-9 place-items-center rounded-full border border-line-strong bg-panel text-muted hover:text-fg"
-            aria-label="Swap origin and destination"
-            title="Swap"
-          >
-            <ArrowDownUp className="size-4" />
-          </button>
-        )}
-      </div>
+  const places = (
+    <div className="relative flex flex-col gap-3">
+      <PlaceInput
+        label="From"
+        placeholder="City, address or truck stop"
+        value={origin}
+        onChange={setOrigin}
+        near={destination}
+        allowLocate
+        marker="origin"
+      />
+      <PlaceInput
+        label="To"
+        placeholder="Where are you headed?"
+        value={destination}
+        onChange={setDestination}
+        near={origin}
+        marker="destination"
+      />
+      {(origin || destination) && (
+        <button
+          type="button"
+          onClick={() => {
+            setOrigin(destination)
+            setDestination(origin)
+          }}
+          className="absolute right-14 top-[calc(50%-4px)] z-10 grid size-9 place-items-center rounded-full border border-line-strong bg-panel text-muted transition hover:rotate-180 hover:text-fg active:scale-90"
+          aria-label="Swap origin and destination"
+          title="Swap"
+        >
+          <ArrowDownUp className="size-4" />
+        </button>
+      )}
+    </div>
+  )
 
+  const settings = (
+    <>
       <DepartureField value={departure} onChange={setDeparture} tz={tz} />
       <LoadField value={load} onChange={setLoad} />
-
       <div>
         <span id="interval-label" className="mb-1.5 block text-[13px] font-semibold uppercase tracking-wider text-muted">
           Weather check every
@@ -131,23 +142,34 @@ export function PlanForm({ initial, onPlanned }: Props) {
           ]}
         />
       </div>
+    </>
+  )
 
+  const footer = (
+    <>
       {samePlace && <p className="text-sm text-sev">Origin and destination are the same place.</p>}
       {error && (
-        <p role="alert" className="rounded-xl border border-sev/40 bg-sev/10 px-4 py-3 text-[15px]">
+        <p role="alert" className="anim-shake rounded-xl border border-sev/40 bg-sev/10 px-4 py-3 text-[15px]">
           {error}
         </p>
       )}
-
       <button
         type="submit"
         disabled={!ready || samePlace || mutation.isPending}
-        className="flex min-h-14 items-center justify-center gap-2.5 rounded-xl bg-signal font-display text-[19px] font-bold uppercase tracking-wide text-signal-ink transition-[filter] hover:brightness-105 disabled:cursor-not-allowed disabled:bg-raised disabled:text-faint disabled:shadow-[inset_0_0_0_1px_var(--tr-line)]"
+        aria-busy={mutation.isPending}
+        className={cn(
+          'relative flex min-h-14 items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-signal font-display text-[19px] font-bold uppercase tracking-wide text-signal-ink transition-[filter,transform,background-color] hover:brightness-105 active:scale-[0.985] disabled:cursor-not-allowed',
+          // While planning, stay amber (busy) instead of looking disabled.
+          mutation.isPending ? 'brightness-95' : 'disabled:bg-raised disabled:text-faint disabled:shadow-[inset_0_0_0_1px_var(--tr-line)]',
+        )}
       >
         {mutation.isPending ? (
           <>
+            <span className="anim-progress absolute inset-x-0 bottom-0 h-[3px] bg-signal-ink/50" aria-hidden="true" />
             <Loader2 className="size-5 animate-spin" aria-hidden="true" />
-            <span aria-live="polite">{stage}</span>
+            <span aria-live="polite" key={stage} className="anim-fade-up">
+              {stage}
+            </span>
           </>
         ) : (
           <>
@@ -155,6 +177,30 @@ export function PlanForm({ initial, onPlanned }: Props) {
           </>
         )}
       </button>
+    </>
+  )
+
+  if (layout === 'split') {
+    return (
+      <form onSubmit={submit} aria-label="Plan a trip" className="grid grid-cols-[1.05fr_1fr] gap-x-7">
+        <div className="flex min-w-0 flex-col gap-5">
+          {places}
+          <ConditionsPreview origin={origin} destination={destination} load={load} />
+        </div>
+        <div className="flex min-w-0 flex-col gap-5">
+          {settings}
+          {footer}
+        </div>
+      </form>
+    )
+  }
+
+  return (
+    <form onSubmit={submit} className={cn('flex flex-col gap-5')} aria-label="Plan a trip">
+      {places}
+      <ConditionsPreview origin={origin} destination={destination} load={load} />
+      {settings}
+      {footer}
     </form>
   )
 }

@@ -6,7 +6,15 @@ import { SNAP_VH } from './sheet'
 const ORDER: SheetSnap[] = ['peek', 'half', 'full']
 
 /** Mobile bottom sheet with three snap points; drag the handle or tap it to cycle. */
-export function BottomSheet({ children, scrollRef }: { children: ReactNode; scrollRef?: RefObject<HTMLDivElement | null> }) {
+export function BottomSheet({
+  children,
+  scrollRef,
+  transitionName,
+}: {
+  children: ReactNode
+  scrollRef?: RefObject<HTMLDivElement | null>
+  transitionName?: string
+}) {
   const snap = useUi((s) => s.sheet)
   const setSnap = useUi((s) => s.setSheet)
   const drag = useRef<{ y: number; startVh: number; moved: boolean } | null>(null)
@@ -47,7 +55,7 @@ export function BottomSheet({ children, scrollRef }: { children: ReactNode; scro
       className={cn(
         'absolute inset-x-0 bottom-0 z-20 flex flex-col rounded-t-3xl border-t border-line bg-panel shadow-[0_-10px_40px_rgb(0_0_0/0.35)] transition-[height] duration-300 ease-out',
       )}
-      style={{ height: `${SNAP_VH[snap]}dvh` }}
+      style={{ height: `${SNAP_VH[snap]}dvh`, viewTransitionName: transitionName }}
     >
       <button
         type="button"
