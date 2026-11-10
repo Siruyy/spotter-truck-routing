@@ -1,0 +1,21 @@
+LICENSE
+  s_cfe53bc33c9ae9::t_49c85deaedfedd 1,3-6,9-14
+README.md
+  s_cfe53bc33c9ae9::t_5f0b46041fb6c9 211
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b5e93ccf6ebab643fb1cbf95dc0cc02ae58036ed",
+  "prompts": {},
+  "sessions": {
+    "s_cfe53bc33c9ae9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bd6c7d5-6ab6-4837-bd28-57ae03622a96",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
