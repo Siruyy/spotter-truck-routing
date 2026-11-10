@@ -10,6 +10,10 @@ interface Particle {
   age: number
   life: number
   seed: number
+  vx: number // px/frame sideways drift (wind-driven for rain)
+  vy: number // px/frame fall speed
+  size: number // flake radius / streak length
+  tier: number // 0 light, 1 moderate, 2 heavy: drawn with increasing opacity
 }
 
 const MAX_WIND = 2400
@@ -76,13 +80,31 @@ export function WeatherFx({ layer, visible }: { layer: HeatLayer; visible: boole
     const placePrecip = (p: Particle) => {
       spawn(p, false)
       const s = sampleAt(p.x, p.y)
-      const amount = s ? (layer === 'rain' ? s.rain : s.snow) : 0
-      const odds = layer === 'rain' ? amount / 0.25 : amount / 0.6
-      if (!s || amount < 0.003 || Math.random() > Math.min(1, 0.15 + odds)) p.life = -1
+      const isRain = layer === 'rain'
+      const amount = s ? (isRain ? s.rain : s.snow) : 0
+      // Density follows intensity; trace amounts get only a sprinkle.
+      const odds = isRain ? amount / 0.2 : amount / 0.5
+      if (!s || amount < 0.01 || Math.random() > Math.min(1, odds)) {
+        p.life = -1
+        return
+      }
+      p.tier = amount < (isRain ? 0.1 : 0.5) ? 0 : amount < (isRain ? 0.5 : 2) ? 1 : 2
+      if (isRain) {
+        // Short local streak (~40-70 px), slanted by the wind: never drifts out of the rain area.
+        p.life = 5 + Math.random() * 4
+        p.vy = 7 + Math.random() * 2
+        p.vx = s.ux * Math.min(4, 1 + s.speed * 0.12)
+        p.size = 7 + p.tier * 3
+      } else {
+        p.life = 50 + Math.random() * 40
+        p.vy = 0.35 + Math.random() * 0.45
+        p.vx = s.ux * Math.min(1.2, s.speed * 0.04)
+        p.size = 0.9 + Math.random() * 1.3
+      }
     }
     field.setHour(useUi.getState().hour)
     for (let i = 0; i < count; i++) {
-      const p = { x: 0, y: 0, age: 0, life: 0, seed: 0 }
+      const p = { x: 0, y: 0, age: 0, life: 0, seed: 0, vx: 0, vy: 0, size: 1, tier: 0 }
       if (layer === 'wind') spawn(p, true)
       else placePrecip(p)
       particles.push(p)
@@ -91,14 +113,14 @@ export function WeatherFx({ layer, visible }: { layer: HeatLayer; visible: boole
     const palette = light
       ? {
           wind: ['rgba(40,52,66,0.28)', 'rgba(40,52,66,0.5)', 'rgba(196,120,0,0.8)', 'rgba(200,60,30,0.9)'],
-          rain: 'rgba(30,100,190,0.6)',
-          snow: 'rgba(90,110,140,0.85)',
+          rain: 'rgb(30,100,190)',
+          snow: 'rgb(90,110,140)',
           arrow: 'rgba(30,40,55,0.75)',
         }
       : {
           wind: ['rgba(236,233,226,0.35)', 'rgba(236,233,226,0.6)', 'rgba(255,214,120,0.8)', 'rgba(255,140,90,0.95)'],
-          rain: 'rgba(170,210,255,0.6)',
-          snow: 'rgba(245,248,255,0.9)',
+          rain: 'rgb(175,212,255)',
+          snow: 'rgb(245,248,255)',
           arrow: 'rgba(236,233,226,0.75)',
         }
 
@@ -174,31 +196,46 @@ export function WeatherFx({ layer, visible }: { layer: HeatLayer; visible: boole
 
       ctx.clearRect(0, 0, w, h)
       const isRain = layer === 'rain'
-      ctx.strokeStyle = palette.rain
-      ctx.fillStyle = palette.snow
-      ctx.lineWidth = 1
-      ctx.beginPath()
+      const alphaByTier = [0.35, 0.6, 0.9]
+      // Update: age, re-place expired/empty drops, move live ones.
       for (const p of particles) {
-        if (++p.age > p.life) {
+        if (p.life < 0 || ++p.age > p.life) {
           placePrecip(p)
           continue
         }
-        if (p.life < 0) continue
         if (isRain) {
-          const fall = 9 + (p.seed % 1) * 5
-          p.y += fall
-          p.x += 1.2
-          ctx.moveTo(p.x, p.y)
-          ctx.lineTo(p.x - 1.6, p.y - 10)
+          p.x += p.vx
+          p.y += p.vy
         } else {
-          p.y += 0.7 + (p.seed % 1) * 0.6
-          p.x += Math.sin(frame / 22 + p.seed) * 0.6
-          ctx.moveTo(p.x + 1.6, p.y)
-          ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2)
+          p.x += p.vx + Math.sin(frame / 24 + p.seed) * 0.35
+          p.y += p.vy
         }
       }
-      if (isRain) ctx.stroke()
-      else ctx.fill()
+      // Draw: one path per intensity tier, heavier tiers more opaque.
+      ctx.lineCap = 'round'
+      for (let tier = 0; tier < 3; tier++) {
+        ctx.globalAlpha = alphaByTier[tier] as number
+        ctx.beginPath()
+        for (const p of particles) {
+          if (p.life < 0 || p.tier !== tier) continue
+          if (isRain) {
+            ctx.moveTo(p.x, p.y)
+            ctx.lineTo(p.x - p.vx * (p.size / p.vy), p.y - p.size)
+          } else {
+            ctx.moveTo(p.x + p.size, p.y)
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+          }
+        }
+        if (isRain) {
+          ctx.strokeStyle = palette.rain
+          ctx.lineWidth = 1 + tier * 0.25
+          ctx.stroke()
+        } else {
+          ctx.fillStyle = palette.snow
+          ctx.fill()
+        }
+      }
+      ctx.globalAlpha = 1
     }
 
     // Particles live in screen space: re-seed when the view moves.

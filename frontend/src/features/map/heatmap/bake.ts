@@ -47,8 +47,8 @@ const RAMPS: Record<Exclude<HeatLayer, 'risk'>, { max: number; stops: [number, R
     max: 1.2,
     stops: [
       [0, [91, 155, 213, 0]],
-      [0.005, [91, 155, 213, 70]],
-      [0.03, [80, 170, 230, 125]],
+      [0.005, [91, 155, 213, 45]],
+      [0.03, [80, 170, 230, 115]],
       [0.1, [80, 170, 230, 165]],
       [0.25, [233, 196, 106, 195]],
       [0.5, [224, 65, 47, 215]],
@@ -58,10 +58,10 @@ const RAMPS: Record<Exclude<HeatLayer, 'risk'>, { max: number; stops: [number, R
   snow: {
     max: 3.5,
     stops: [
-      [0, [220, 230, 255, 0]],
-      [0.02, [220, 230, 255, 80]],
-      [0.2, [200, 215, 255, 140]],
-      [0.5, [180, 205, 255, 180]],
+      [0, [190, 215, 255, 0]],
+      [0.02, [190, 215, 255, 45]],
+      [0.2, [170, 200, 255, 120]],
+      [0.5, [150, 190, 255, 170]],
       [1.0, [233, 196, 106, 205]],
       [2.0, [224, 65, 47, 222]],
       [3.0, [168, 85, 199, 240]],
@@ -256,7 +256,10 @@ export function bakeFrames(input: BakeInput): Uint8ClampedArray[] {
       }
       const [r, g, b, a] = colorFor(layer, value)
       // Fade out where the corridor thins (coverage ~1 inside, -> 0 at the edge).
-      const edge = Math.min(1, Math.max(0, (wsum - 0.05) / 0.6))
+      // Smooth fade where data thins out: interior coverage is ~4.3 (sum of the
+      // 5x5 Gaussian), ~2.2 on the outermost lattice row, and ~0 two cells out.
+      const t = Math.min(1, Math.max(0, (wsum - 0.1) / 2.5))
+      const edge = t * t * (3 - 2 * t)
       const o = p * 4
       out[o] = r
       out[o + 1] = g
