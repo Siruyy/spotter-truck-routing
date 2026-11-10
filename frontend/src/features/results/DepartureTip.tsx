@@ -29,7 +29,7 @@ export function DepartureTip({ plan, tz }: { plan: Plan; tz: string }) {
       },
     )
   return (
-    <section className="rounded-2xl border border-low/50 bg-low/10 p-4">
+    <section className="anim-fade-up rounded-2xl border border-low/50 bg-low/10 p-4" style={{ animationDelay: '120ms' }}>
       <div className="flex items-start gap-3">
         <Clock3 className="mt-0.5 size-5 shrink-0" style={{ color: 'var(--color-low)' }} aria-hidden="true" />
         <div className="min-w-0 flex-1">

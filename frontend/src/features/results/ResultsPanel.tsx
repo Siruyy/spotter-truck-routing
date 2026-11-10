@@ -76,7 +76,7 @@ export function ResultsPanel({ plan, onEdit }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex items-start gap-3">
+      <header className="anim-fade-up flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="font-display text-[21px] font-bold leading-tight">
             <span className="truncate">{plan.request.origin.label}</span>
@@ -119,7 +119,9 @@ export function ResultsPanel({ plan, onEdit }: Props) {
         </p>
       )}
 
-      <Verdict plan={plan} />
+      <div className="anim-fade-up" style={{ animationDelay: '80ms' }}>
+        <Verdict plan={plan} />
+      </div>
       <DepartureTip plan={plan} tz={tz} />
       {live && <AlertsPanel planId={plan.id} />}
 
@@ -135,20 +137,21 @@ export function ResultsPanel({ plan, onEdit }: Props) {
             {n}
           </p>
         ))}
-        {plan.routes.map((r) => (
+        {plan.routes.map((r, i) => (
+          <div key={r.id} className="anim-fade-up" style={{ animationDelay: `${160 + i * 70}ms` }}>
           <RouteCard
-            key={r.id}
             route={r}
             selected={r.id === route?.id}
             recommended={r.id === plan.recommendation.route_id}
             fastestDuration={fastest}
             onSelect={() => selectRoute(r.id)}
           />
+          </div>
         ))}
       </section>
 
       {route && (
-        <section aria-label="Checkpoints" className="flex flex-col gap-2">
+        <section aria-label="Checkpoints" className="anim-fade-up flex flex-col gap-2" style={{ animationDelay: '380ms' }}>
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted">
               Route {route.id} · {route.checkpoints.length} checkpoints

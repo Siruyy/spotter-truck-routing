@@ -31,7 +31,7 @@ export function Verdict({ plan }: { plan: Plan }) {
   const risky = s.severe_mi > 0 || s.high_mi > 0
   const Icon = risky ? TriangleAlert : ShieldCheck
   return (
-    <section aria-live="polite" className="rounded-2xl border-2 border-signal bg-signal/8 p-4">
+    <section aria-live="polite" className="anim-glow rounded-2xl border-2 border-signal bg-signal/8 p-4">
       <div className="text-[13px] font-semibold uppercase tracking-wider text-muted">Recommended</div>
       <div className="mt-1 flex items-center gap-3">
         <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-signal font-display text-2xl font-bold text-signal-ink">

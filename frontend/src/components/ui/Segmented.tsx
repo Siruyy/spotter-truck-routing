@@ -30,7 +30,7 @@ export function Segmented<T extends string | number>({ value, options, onChange,
             aria-label={o.ariaLabel}
             onClick={() => onChange(o.value)}
             className={cn(
-              'flex flex-1 items-center justify-center gap-1.5 rounded-lg font-semibold transition-colors',
+              'flex flex-1 items-center justify-center gap-1.5 rounded-lg font-semibold transition-[color,background-color,box-shadow,transform] duration-150 active:scale-[0.97]',
               size === 'md' ? 'min-h-11 px-3 text-[15px]' : 'min-h-9 px-2.5 text-sm',
               active ? 'bg-raised text-fg shadow-[0_0_0_1px_var(--tr-line-strong)]' : 'text-muted hover:text-fg',
             )}

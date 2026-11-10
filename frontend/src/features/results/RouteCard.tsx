@@ -29,8 +29,8 @@ export function RouteCard({ route, selected, recommended, fastestDuration, onSel
       onClick={onSelect}
       aria-pressed={selected}
       className={cn(
-        'group w-full rounded-2xl border p-4 text-left transition-colors',
-        selected ? 'border-fg/70 bg-raised' : 'border-line bg-panel hover:border-line-strong',
+        'group w-full rounded-2xl border p-4 text-left transition-[border-color,background-color,transform,box-shadow] duration-200 active:scale-[0.99]',
+        selected ? 'border-fg/70 bg-raised shadow-[0_8px_24px_rgb(0_0_0/0.25)]' : 'border-line bg-panel hover:-translate-y-px hover:border-line-strong',
       )}
     >
       <div className="flex items-start gap-3">

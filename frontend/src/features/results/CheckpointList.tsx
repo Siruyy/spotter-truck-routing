@@ -54,7 +54,7 @@ export function CheckpointList({ route }: { route: PlannedRoute }) {
               aria-expanded={open}
               onClick={() => setFocus(open ? null : { routeId: route.id, index: cp.i, source: 'list' })}
               className={cn(
-                'grid w-full grid-cols-[3.25rem_1fr_auto_1.25rem] items-center gap-3 rounded-xl px-2 py-2 text-left',
+                'grid w-full grid-cols-[3.25rem_1fr_auto_1.25rem] items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors duration-150',
                 open ? 'bg-raised' : 'hover:bg-raised/60',
               )}
             >
@@ -73,7 +73,7 @@ export function CheckpointList({ route }: { route: PlannedRoute }) {
               <ChevronDown className={cn('size-4 text-faint transition-transform', open && 'rotate-180')} aria-hidden="true" />
             </button>
             {open && (
-              <div className="mx-2 mb-2 mt-1 rounded-xl border border-line bg-panel p-3.5">
+              <div className="anim-fade-up mx-2 mb-2 mt-1 rounded-xl border border-line bg-panel p-3.5">
                 <CheckpointDetails checkpoint={cp} routeId={route.id} routeName={route.name} />
               </div>
             )}

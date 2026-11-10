@@ -28,7 +28,7 @@ export function AlertsPanel({ planId }: { planId: string }) {
     )
   if (isError || !data || data.alerts.length === 0) return null
   return (
-    <section className="rounded-2xl border border-line bg-panel" aria-label="Official weather alerts">
+    <section className="anim-fade-up rounded-2xl border border-line bg-panel" aria-label="Official weather alerts">
       <div className="flex items-center gap-2 px-4 pt-3.5 text-[13px] font-semibold uppercase tracking-wider text-muted">
         <Megaphone className="size-4" aria-hidden="true" />
         NWS alerts on your routes ({data.alerts.length})

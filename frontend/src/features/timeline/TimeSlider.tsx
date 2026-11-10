@@ -96,7 +96,7 @@ export function TimeSlider({ tz, compact = false }: { tz: string; compact?: bool
     <section
       aria-label="Forecast timeline"
       className={cn(
-        'pointer-events-auto rounded-2xl border border-line bg-panel/95 shadow-[0_10px_40px_rgb(0_0_0/0.35)] backdrop-blur',
+        'anim-fade-up pointer-events-auto rounded-2xl border border-line bg-panel/95 shadow-[0_10px_40px_rgb(0_0_0/0.35)] backdrop-blur',
         compact ? 'p-2' : 'p-2.5',
       )}
     >
