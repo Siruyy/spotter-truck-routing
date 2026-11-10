@@ -1,0 +1,22 @@
+frontend/src/features/map/heatmap/bake.ts
+  s_874b9dace0bb92::t_2f6a4044ad6685 50-51,61-64,259-262
+frontend/src/features/map/weatherFx/WeatherFx.tsx
+  s_874b9dace0bb92::t_f1e2fba4b729c5 200,202,207-214,220,223
+  s_874b9dace0bb92::t_db661b10af1f6b 13-16,83-103,107,116-117,122-123,199,215-219,221-222,224-232,234-235,238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4cf7248feb9acf1a11a6a7fae511499b48905ff7",
+  "prompts": {},
+  "sessions": {
+    "s_874b9dace0bb92": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "718d8111-b26e-4708-8283-181e8695177c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Siruyy <nulysses.roda@gmail.com>"
+    }
+  }
+}
